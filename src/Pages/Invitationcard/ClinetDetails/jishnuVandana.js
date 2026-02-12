@@ -1,10 +1,17 @@
+import invitation from '../../../assets/Invitation/invitation.jpg'
 const jishnuVandana = {
   slug: "jishnu-vandana",
 
   couple: {
     bride: "Dr. Vandana S.S",
     groom: "Jishnu K.P",
+images: {
+      mobile:
+        invitation,
 
+      desktop:
+        "https://images.unsplash.com/photo-1520854221256-17451cc331bf?w=1600&auto=format&fit=crop",
+    },
     parents: {
       groomParents: "Mr. Sajeevan K.P & Mrs. Dajirani K.P",
       brideParents: "Dr. Sudeep & Sheeba K.T",

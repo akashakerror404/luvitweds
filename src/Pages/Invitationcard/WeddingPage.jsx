@@ -2,6 +2,7 @@ import React from "react";
 import { useParams } from "react-router-dom";
 import { allWeddings } from "./ClinetDetails";
 import Lottie from "lottie-react";
+import invitation from '../../assets/Invitation/invitation.jpg'
 
 // Import Lottie animations (you'll need to add these files to your project)
 import heartAnimation from "./animations/weddingfloral.json";
@@ -106,7 +107,7 @@ function WeddingPage() {
                     <img
                         src={
                             mobileImage ||
-                            "https://images.unsplash.com/photo-1519741497674-611481863552?w=800&auto=format&fit=crop"
+                           invitation
                         }
                         alt={`${data.couple.bride} & ${data.couple.groom}`}
                         className="w-full h-full object-cover animate-zoom-in"
