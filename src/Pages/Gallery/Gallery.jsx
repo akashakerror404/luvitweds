@@ -1,11 +1,10 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Swiper, SwiperSlide } from 'swiper/react'
-import { Navigation as SwiperNavigation, Pagination as SwiperPagination, Autoplay as SwiperAutoplay, EffectCoverflow as SwiperEffectCoverflow ,EffectCreative as SwiperEffectCreative} from 'swiper/modules'
+import { Navigation as SwiperNavigation, Pagination as SwiperPagination, Autoplay as SwiperAutoplay, EffectCreative as SwiperEffectCreative } from 'swiper/modules'
 import 'swiper/css'
 import 'swiper/css/navigation'
 import 'swiper/css/pagination'
-import 'swiper/css/effect-coverflow'
 
 // Import only the initial images needed for the hero section
 import sectionOne1 from '../../assets/GALLERY/SECTION_ONE/sectionone (1).jpg';
@@ -146,8 +145,8 @@ function Gallery() {
     { id: 111, caption: "Together, always and forever." },
   ];
 
-  // Function to dynamically import images
-  const loadImages = async (start, end) => {
+  // Function to dynamically import images - wrapped in useCallback
+  const loadImages = useCallback(async (start, end) => {
     setIsLoading(true);
     try {
       const newImages = await Promise.all(
@@ -165,19 +164,19 @@ function Gallery() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [imageData]); // Added imageData as dependency
 
   // Load initial set of images
   useEffect(() => {
     loadImages(0, visibleCount);
-  }, []);
+  }, [loadImages, visibleCount]); // Added missing dependencies
 
   // Load more images when visibleCount increases
   useEffect(() => {
     if (visibleCount > 20) {
       loadImages(loadedImages.length, visibleCount);
     }
-  }, [visibleCount]);
+  }, [visibleCount, loadImages, loadedImages.length]); // Added missing dependencies
 
   const loadMoreImages = () => {
     setVisibleCount(prev => Math.min(prev + 20, imageData.length));

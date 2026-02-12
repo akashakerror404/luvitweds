@@ -20,7 +20,6 @@ function WeddingPage() {
     });
     
     const [showConfetti, setShowConfetti] = React.useState(false);
-    const [isHovering, setIsHovering] = React.useState(false);
 
     React.useEffect(() => {
         if (!data?.wedding) return;
@@ -72,10 +71,6 @@ function WeddingPage() {
     const desktopImage = data?.couple?.images?.desktop;
 
     const googleMapsUrl = data?.wedding?.mapLocation || null;
-
-    const mapQuery = data?.wedding?.venue
-        ? encodeURIComponent(data.wedding.venue)
-        : "";
 
     return (
         <main className="min-h-screen bg-white overflow-hidden">
@@ -216,8 +211,6 @@ function WeddingPage() {
                             target="_blank"
                             rel="noopener noreferrer"
                             className="inline-block py-3 px-6 bg-[#328E6E] text-white rounded-full hover:bg-[#266d56] transition transform hover:scale-105 hover:shadow-lg"
-                            onMouseEnter={() => setIsHovering(true)}
-                            onMouseLeave={() => setIsHovering(false)}
                         >
                             Open in Google Maps
                         </a>
