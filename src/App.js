@@ -31,7 +31,7 @@ function App() {
         <Route path="/packages" element={<Packages />} />
         <Route path="/our-team" element={<OurTeam />} />
         <Route path="/about" element={<About />} />
-        <Route path="/client-request-details" element={<ClientRequestDetails />} />
+        {/* <Route path="/client-request-details" element={<ClientRequestDetails />} /> */}
 
         {/* Wedding page without Navbar */}
         <Route path="/luvit-wedding/:slug" element={<WeddingPage />} />
