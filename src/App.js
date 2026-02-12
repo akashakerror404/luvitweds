@@ -8,7 +8,7 @@ import OurTeam from './Pages/OurTeam/OurTeam';
 import About from './Pages/About/About';
 import Navbar from './Pages/NavBar/Navbar';
 import Chatboat from './Pages/chatboat/Chatboat';
-import ClientRequestDetails from './Pages/clinetdeatils/ClinetRequestDetils';
+// import ClientRequestDetails from './Pages/clinetdeatils/ClinetRequestDetils';
 import WeddingPage from './Pages/Invitationcard/WeddingPage';
 import { Analytics } from "@vercel/analytics/react";
 
