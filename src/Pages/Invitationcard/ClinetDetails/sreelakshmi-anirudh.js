@@ -1,3 +1,5 @@
+import invitation from '../../../assets/Invitation/invitation.jpg'
+
 const sreelakshmi = {
   slug: "sreelakshmi-anirudh",
 
@@ -7,7 +9,7 @@ const sreelakshmi = {
 
     images: {
       mobile:
-        "https://i.pinimg.com/736x/b8/b4/31/b8b431ea3bd32bbb2a0a899162e3b6d7.jpg",
+        invitation,
 
       desktop:
         "https://images.unsplash.com/photo-1520854221256-17451cc331bf?w=1600&auto=format&fit=crop",
