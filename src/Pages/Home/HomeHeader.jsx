@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useNavigate } from 'react-router-dom';
-
+import CountUp from 'react-countup'
 import hero1 from '../../assets/HERO_IMAGES/hero1.jpg';
 import hero2 from '../../assets/HERO_IMAGES/hero2.jpg';
 import hero3 from '../../assets/HERO_IMAGES/hero3.jpg';
@@ -26,7 +26,7 @@ import Test from '../Test/Test';
 
 
 
-const HERO_IMAGES = [hero1,hero2,hero3,hero4,hero5,hero6,hero7,]
+const HERO_IMAGES = [hero1, hero2, hero3, hero4, hero5, hero6, hero7,]
 const WEDDING_IMAGES = [wed01, wed02, wed03, wed04, wed05, wed06];
 const TESTIMONIALS = [
   {
@@ -36,7 +36,7 @@ const TESTIMONIALS = [
     type: 'Engagement',
     date: 'June 2024'
   },
-  
+
   {
     name: 'Rahul & Smaya',
     image: TESTIMONIALS02,
@@ -78,7 +78,7 @@ function HomeHeader() {
   return (
     <div className="min-h-screen bg-white overflow-hidden">
       {/* Hero Section with Enhanced Animation */}
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 2 }}
@@ -86,85 +86,138 @@ function HomeHeader() {
       >
         {/* Background Image Layer */}
         <div className="absolute inset-0">
-          <AnimatePresence mode='wait'>
-            <motion.img
-              key={currentImageIndex}
-              src={HERO_IMAGES[currentImageIndex]}
-              alt="Wedding Celebration"
-              initial={{ opacity: 0, scale: 1.1 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 1.5, ease: "easeInOut" }}
-              className="w-full h-full object-cover"
-            />
-          </AnimatePresence>
-          <div className="absolute inset-0 bg-gradient-to-r from-[#328E6E]/70 to-transparent" />
-        </div>
+      <AnimatePresence mode='wait'>
+        <motion.img
+          key={currentImageIndex}
+          src={HERO_IMAGES[currentImageIndex]}
+          alt="Wedding Celebration"
+          initial={{ opacity: 0, scale: 1.1 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 1.5, ease: "easeInOut" }}
+          className="w-full h-full object-cover"
+        />
+      </AnimatePresence>
+      <div className="absolute inset-0 bg-gradient-to-r from-[#328E6E]/10 to-transparent" />
+      <div className="absolute inset-0 bg-black/20" />
+    </div>
 
-        {/* Content Layer */}
-        <div className="relative h-full flex items-center">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
-            <div className="max-w-3xl">
-             {/* <motion.span
-                initial={{ y: 50, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ duration: 1, delay: 0.3 }}
-                className="text-[#E1EEBC] text-xl mb-4 block font-montserrat"
-              >
-                Welcome to Luxury Wedding Planning
-              </motion.span> */}
-              
-              <motion.h1 
-                initial={{ y: 100, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ duration: 1.5, ease: "easeOut", delay: 0.5 }}
-                className="text-5xl sm:text-7xl md:text-8xl font-playfair font-bold text-white mb-8"
-              >
-                Crafting Your Perfect Love Story
-              </motion.h1>
-              
-              <motion.p
-                initial={{ y: 50, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ duration: 1.5, ease: "easeOut", delay: 0.8 }}
-                className="text-xl sm:text-2xl text-gray-200 mb-12 font-montserrat leading-relaxed"
-              >
-                From intimate ceremonies to grand celebrations, we specialize in creating bespoke wedding experiences that reflect your unique love story. Let us transform your vision into an unforgettable reality.
-              </motion.p>
+    {/* Content Layer */}
+    <div className="relative h-full flex items-center">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+        <div className="max-w-3xl">
+          {/* Tagline with decorative elements */}
+          <motion.div 
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ duration: 0.8, delay: 0.3 }}
+            className="flex items-center gap-2 mb-4"
+          >
+            <div className="w-12 h-0.5 bg-[#E1EEBC]" />
+            <span className="text-[#E1EEBC] font-montserrat tracking-widest text-sm">YOUR DREAM WEDDING STARTS HERE</span>
+          </motion.div>
+          
+          <motion.h1 
+            initial={{ y: 100, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ duration: 1.5, ease: "easeOut", delay: 0.5 }}
+            className="text-5xl sm:text-6xl md:text-7xl font-playfair font-bold text-white mb-6 leading-tight"
+          >
+            Crafting Your <span className="text-[#E1EEBC]">Perfect</span> Love Story
+          </motion.h1>
+          
+          <motion.p
+            initial={{ y: 50, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ duration: 1.5, ease: "easeOut", delay: 0.8 }}
+            className="text-lg sm:text-xl text-gray-100 mb-10 font-montserrat leading-relaxed max-w-lg"
+          >
+            From intimate ceremonies to grand celebrations, we specialize in creating bespoke wedding experiences that reflect your unique love story.
+          </motion.p>
 
-              <motion.div
-                initial={{ y: 50, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ duration: 1.5, delay: 1.2 }}
-                className="flex flex-wrap gap-4"
-              >
-                <motion.button
-                  whileHover={{ scale: 1.05, backgroundColor: '#67AE6E' }}
-                  whileTap={{ scale: 0.95 }}
-                  className="px-8 py-4 bg-[#328E6E] text-white text-lg rounded-full font-montserrat transition-all duration-300 shadow-lg flex items-center gap-2"
-                  onClick={() => navigate('/packages')}
+          {/* Stats Section */}
+   <motion.div
+  initial={{ opacity: 0 }}
+  animate={{ opacity: 1 }}
+  transition={{ duration: 0.8 }}
+  className="flex flex-wrap md:justify-start justify-center gap-4 mb-12"
 >
-                  Start Planning
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                  </svg>
-                </motion.button>
-                <motion.button
-      whileHover={{ scale: 1.05, backgroundColor: '#E1EEBC', borderColor: '#E1EEBC' }}
-      whileTap={{ scale: 0.95 }}
-      onClick={() => navigate('/gallery')}
-      className="px-8 py-4 border-2 border-white text-white text-lg rounded-full font-montserrat hover:text-[#328E6E] transition-all duration-300 shadow-lg"
-    >
-      Explore Our Work
-    </motion.button>
-              </motion.div>
+  {/* Years Experience */}
+  <div className="flex items-baseline gap-1.5 px-4 py-2.5">
+    <span className="text-3xl font-medium text-[#E1EEBC] font-playfair">
+      <CountUp end={12} duration={1.8} suffix="+" />
+    </span>
+    <span className="text-white/90 font-montserrat text-sm tracking-tight">Years</span>
+  </div>
+
+  {/* Happy Couples */}
+  <div className="flex items-baseline gap-1.5 px-4 py-2.5">
+    <span className="text-3xl font-medium text-[#E1EEBC] font-playfair">
+      <CountUp end={450} duration={1.8} suffix="+" />
+    </span>
+    <span className="text-white/90 font-montserrat text-sm tracking-tight">Couples</span>
+  </div>
+
+  {/* Awards */}
+  <div className="flex items-baseline gap-1.5 px-4 py-2.5">
+    <span className="text-3xl font-medium text-[#E1EEBC] font-playfair">
+      <CountUp end={27} duration={1.8} />
+    </span>
+    <span className="text-white/90 font-montserrat text-sm tracking-tight">Awards</span>
+  </div>
+
+  {/* Satisfaction */}
+  <div className="flex items-baseline gap-1.5 px-4 py-2.5">
+    <span className="text-3xl font-medium text-[#E1EEBC] font-playfair">
+      <CountUp end={100} duration={1.8} suffix="%" />
+    </span>
+    <span className="text-white/90 font-montserrat text-sm tracking-tight">Satisfaction</span>
+  </div>
+</motion.div>
+
+          {/* CTA Buttons */}
+          <motion.div
+            initial={{ y: 50, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ duration: 1.5, delay: 1.2 }}
+            className="flex flex-wrap gap-4"
+          >
+            <motion.button
+              whileHover={{ 
+                scale: 1.05, 
+                backgroundColor: '#67AE6E',
+                boxShadow: '0 10px 25px rgba(50, 142, 110, 0.5)'
+              }}
+              whileTap={{ scale: 0.95 }}
+              className="px-8 py-4 bg-[#328E6E] text-white text-lg rounded-full font-montserrat transition-all duration-300 shadow-lg flex items-center gap-2"
+              onClick={() => navigate('/packages')}
+            >
+              Start Planning
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+              </svg>
+            </motion.button>
+            <motion.button
+              whileHover={{ 
+                scale: 1.05, 
+                backgroundColor: '#E1EEBC',
+                color: '#328E6E',
+                borderColor: '#E1EEBC'
+              }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => navigate('/gallery')}
+              className="px-8 py-4 border-2 border-white text-white text-lg rounded-full font-montserrat transition-all duration-300 shadow-lg hover:bg-[#E1EEBC] hover:text-[#328E6E]"
+            >
+              Explore Our Work
+            </motion.button>
+          </motion.div>
             </div>
           </div>
         </div>
 
 
         {/* Enhanced Scroll Indicator */}
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1, y: [0, 10, 0] }}
           transition={{ duration: 2, delay: 2, repeat: Infinity }}
@@ -191,8 +244,8 @@ function HomeHeader() {
               Every wedding tells a unique story. Browse through our gallery of enchanting celebrations that showcase our dedication to creating perfect moments.
             </p>
           </motion.div>
-          
-          <motion.div 
+
+          <motion.div
             initial={{ opacity: 0, y: 50 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
@@ -208,8 +261,8 @@ function HomeHeader() {
                 transition={{ delay: index * 0.2 }}
                 className="relative overflow-hidden rounded-2xl shadow-lg aspect-[4/3] group"
               >
-                <img 
-                  src={image} 
+                <img
+                  src={image}
                   alt={`Wedding Gallery ${index + 1}`}
                   className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500"
                 />
@@ -237,7 +290,7 @@ function HomeHeader() {
               Real couples, real emotions, real memories. Discover how we helped these couples bring their dream weddings to life.
             </p>
           </motion.div>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
             {TESTIMONIALS.map((testimonial, index) => (
               <motion.div
@@ -249,8 +302,8 @@ function HomeHeader() {
                 className="bg-white rounded-2xl shadow-lg overflow-hidden group hover:shadow-xl transition-shadow duration-300"
               >
                 <div className="relative">
-                  <img 
-                    src={testimonial.image} 
+                  <img
+                    src={testimonial.image}
                     alt={`${testimonial.name}'s Wedding`}
                     className="w-full h-64 object-cover transform group-hover:scale-105 transition-transform duration-500"
                   />
