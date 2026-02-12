@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react'
+import React, { useState, useEffect, useCallback, useMemo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import { Navigation as SwiperNavigation, Pagination as SwiperPagination, Autoplay as SwiperAutoplay, EffectCreative as SwiperEffectCreative } from 'swiper/modules'
@@ -30,8 +30,8 @@ function Gallery() {
     sectionOne7
   ];
 
-  // Image data with captions - now we'll dynamically import these
-  const imageData = [
+  // Image data with captions - wrapped in useMemo to prevent recreation on every render
+  const imageData = useMemo(() => [
     { id: 1, caption: "A moment captured forever." },
     { id: 2, caption: "A walk to remember." },
     { id: 3, caption: "The beauty of togetherness." },
@@ -143,7 +143,7 @@ function Gallery() {
     { id: 109, caption: "Forever united in heart." },
     { id: 110, caption: "A perfect love story in the making." },
     { id: 111, caption: "Together, always and forever." },
-  ];
+  ], []); // Empty dependency array since this data never changes
 
   // Function to dynamically import images - wrapped in useCallback
   const loadImages = useCallback(async (start, end) => {
@@ -164,19 +164,19 @@ function Gallery() {
     } finally {
       setIsLoading(false);
     }
-  }, [imageData]); // Added imageData as dependency
+  }, [imageData]); // imageData is now stable due to useMemo
 
   // Load initial set of images
   useEffect(() => {
     loadImages(0, visibleCount);
-  }, [loadImages, visibleCount]); // Added missing dependencies
+  }, [loadImages, visibleCount]);
 
   // Load more images when visibleCount increases
   useEffect(() => {
     if (visibleCount > 20) {
       loadImages(loadedImages.length, visibleCount);
     }
-  }, [visibleCount, loadImages, loadedImages.length]); // Added missing dependencies
+  }, [visibleCount, loadImages, loadedImages.length]);
 
   const loadMoreImages = () => {
     setVisibleCount(prev => Math.min(prev + 20, imageData.length));
