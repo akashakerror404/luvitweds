@@ -3,8 +3,8 @@ const jishnuVandana = {
   slug: "jishnu-vandana",
 
   couple: {
-    bride: "Dr. Vandana S.S",
-    groom: "Jishnu K.P",
+    bride: "Jishnu K.P",
+    groom: "Dr. Vandana S.S",
 images: {
       mobile:
         invitation,
