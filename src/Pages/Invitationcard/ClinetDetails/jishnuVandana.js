@@ -43,6 +43,8 @@ images: {
     year: "2026",
     time: "4:00 PM - 9:00 PM",
     venue: "Mehfil Auditorium, Kuttiadi",
+           mapLocation:
+      "https://maps.app.goo.gl/NarqgznfYU8ccRrs7?g_st=aw",
   },
 
   contact: {

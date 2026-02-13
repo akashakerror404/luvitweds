@@ -4,6 +4,7 @@ import { allWeddings } from "./ClinetDetails";
 import Lottie from "lottie-react";
 import invitation from '../../assets/Invitation/invitation.jpg'
 import { motion } from "framer-motion";
+import { Helmet } from "react-helmet";
 
 // Import Lottie animations (you'll need to add these files to your project)
 import heartAnimation from "./animations/weddingfloral.json";
@@ -62,6 +63,10 @@ function WeddingPage() {
     if (!data) {
         return (
             <div className="min-h-screen flex items-center justify-center bg-white">
+                <Helmet>
+                    <title>Wedding Not Found - Luvit Weds</title>
+                    <meta name="description" content="The requested wedding invitation could not be found." />
+                </Helmet>
                 <motion.h2 
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -76,12 +81,59 @@ function WeddingPage() {
 
     const mobileImage = data?.couple?.images?.mobile;
     const desktopImage = data?.couple?.images?.desktop;
+    const shareImage = desktopImage || mobileImage || invitation;
 
-    const googleMapsUrl = data?.wedding?.mapLocation || null;
+    const hasReception = data?.reception?.date && data?.reception?.date !== "";
+    const weddingMapUrl = data?.wedding?.mapLocation || null;
+    const receptionMapUrl = hasReception ? data?.reception?.mapLocation : null;
+
+    // Dynamic meta data for social sharing
+    const pageUrl = `https://luvitweds.vercel.app/luvit-wedding/${data.slug}`;
+    const pageTitle = `${data.couple.bride} & ${data.couple.groom} - Wedding Invitation | Luvit Weds`;
+    const pageDescription = `Join us in celebrating the wedding of ${data.couple.bride} and ${data.couple.groom} on ${data.wedding.date} ${data.wedding.month} ${data.wedding.year} at ${data.wedding.venue}. ${hasReception ? `Reception to follow at ${data.reception.venue}.` : ''}`;
+    const pageImage = shareImage;
 
     return (
         <main className="min-h-screen bg-white overflow-hidden">
             
+            {/* Helmet Meta Tags for SEO and Social Sharing */}
+            <Helmet>
+                {/* Primary Meta Tags */}
+                <title>{pageTitle}</title>
+                <meta name="title" content={pageTitle} />
+                <meta name="description" content={pageDescription} />
+                
+                {/* Open Graph / Facebook */}
+                <meta property="og:type" content="website" />
+                <meta property="og:url" content={pageUrl} />
+                <meta property="og:title" content={pageTitle} />
+                <meta property="og:description" content={pageDescription} />
+                <meta property="og:image" content={pageImage} />
+                <meta property="og:image:width" content="1200" />
+                <meta property="og:image:height" content="630" />
+                <meta property="og:site_name" content="Luvit Weds" />
+                
+                {/* Twitter */}
+                <meta property="twitter:card" content="summary_large_image" />
+                <meta property="twitter:url" content={pageUrl} />
+                <meta property="twitter:title" content={pageTitle} />
+                <meta property="twitter:description" content={pageDescription} />
+                <meta property="twitter:image" content={pageImage} />
+                
+                {/* Additional Meta Tags */}
+                <meta name="keywords" content={`wedding, invitation, ${data.couple.bride}, ${data.couple.groom}, marriage, reception, Luvit Weds`} />
+                <meta name="author" content="Luvit Weds" />
+                <meta name="robots" content="index, follow" />
+                <link rel="canonical" href={pageUrl} />
+                
+                {/* Wedding Specific Meta */}
+                <meta property="wedding:date" content={`${data.wedding.year}-${data.wedding.month}-${data.wedding.date}`} />
+                <meta property="wedding:venue" content={data.wedding.venue} />
+                {hasReception && (
+                    <meta property="wedding:reception" content={data.reception.venue} />
+                )}
+            </Helmet>
+
             {/* Confetti Animation */}
             {showConfetti && (
                 <motion.div 
@@ -125,10 +177,7 @@ function WeddingPage() {
                         <source media="(min-width: 768px)" srcSet={desktopImage} />
                     )}
                     <img
-                        src={
-                            mobileImage ||
-                           invitation
-                        }
+                        src={mobileImage || invitation}
                         alt={`${data.couple.bride} & ${data.couple.groom}`}
                         className="w-full h-full object-cover"
                     />
@@ -138,132 +187,132 @@ function WeddingPage() {
                 <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/20 to-black/30"></div>
 
                 {/* Hero Text with Framer Motion - UPDATED SECTION */}
-       <div className="absolute inset-0 flex items-center justify-center">
-    <div className="text-center text-white px-4">
-        
-        {/* Bride Name - Top with word animation */}
-        <motion.div 
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.3 }}
-            className="mb-2 md:mb-4"
-        >
-            <h1 className="font-serif text-3xl sm:text-4xl md:text-6xl lg:text-7xl tracking-wide drop-shadow-lg">
-                {data.couple.bride.split(' ').map((word, i) => (
-                    <motion.span
-                        key={i}
-                        initial={{ opacity: 0, y: 30 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ 
-                            duration: 0.6, 
-                            delay: 0.4 + (i * 0.1),
-                            ease: "easeOut"
-                        }}
-                        className="inline-block mx-1"
-                    >
-                        {word}
-                    </motion.span>
-                ))}
-            </h1>
-        </motion.div>
-        
-        {/* & Symbol - Middle with special animation */}
-        <motion.div
-            initial={{ opacity: 0, scale: 0, rotate: -180 }}
-            animate={{ opacity: 1, scale: 1, rotate: 0 }}
-            transition={{ 
-                duration: 0.8, 
-                delay: 0.9,
-                type: "spring",
-                stiffness: 200,
-                damping: 15
-            }}
-            className="my-1 md:my-2"
-        >
-            <span className="font-serif text-2xl sm:text-3xl md:text-5xl lg:text-6xl text-[#FFD700] drop-shadow-lg relative">
-                &
-                <motion.span
-                    initial={{ opacity: 0, scale: 0 }}
-                    animate={{ opacity: 1, scale: 1.5 }}
-                    transition={{ duration: 0.4, delay: 1.1 }}
-                    className="absolute inset-0 text-[#FFD700] blur-md"
-                    style={{ zIndex: -1 }}
-                >
-                    &
-                </motion.span>
-            </span>
-        </motion.div>
-        
-        {/* Groom Name - Bottom with word animation */}
-        <motion.div 
-            initial={{ opacity: 0, y: -30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 1.2 }}
-            className="mt-2 md:mt-4"
-        >
-            <h1 className="font-serif text-3xl sm:text-4xl md:text-6xl lg:text-7xl tracking-wide drop-shadow-lg">
-                {data.couple.groom.split(' ').map((word, i) => (
-                    <motion.span
-                        key={i}
-                        initial={{ opacity: 0, y: 30 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ 
-                            duration: 0.6, 
-                            delay: 1.3 + (i * 0.1),
-                            ease: "easeOut"
-                        }}
-                        className="inline-block mx-1"
-                    >
-                        {word}
-                    </motion.span>
-                ))}
-            </h1>
-        </motion.div>
-        
-        {/* Animated decorative line with shine effect */}
-        <motion.div 
-            initial={{ width: 0, opacity: 0 }}
-            animate={{ width: "6rem", opacity: 1 }}
-            transition={{ duration: 1, delay: 1.7 }}
-            className="relative w-12 md:w-16 h-0.5 bg-white/80 mx-auto mt-4 md:mt-6 overflow-hidden"
-        >
-            <motion.div
-                initial={{ x: "-100%" }}
-                animate={{ x: "200%" }}
-                transition={{ 
-                    duration: 1.5, 
-                    delay: 2.2,
-                    repeat: Infinity,
-                    repeatDelay: 3
-                }}
-                className="absolute inset-0 bg-white w-1/2 blur-sm"
-            />
-        </motion.div>
-        
-        {/* Date reveal with elegant entrance */}
-        <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 1.9 }}
-        >
-            <p className="text-sm md:text-base uppercase tracking-[0.3em] mt-4 md:mt-6 text-white/90 font-light">
-                {data.wedding.date} {data.wedding.month} {data.wedding.year}
-            </p>
-            
-            {/* Decorative dots */}
-            <motion.div 
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.6, delay: 2.1 }}
-                className="flex justify-center gap-2 mt-2"
-            >
-                <span className="w-1 h-1 bg-white/60 rounded-full"></span>
-                <span className="w-1 h-1 bg-white/60 rounded-full"></span>
-                <span className="w-1 h-1 bg-white/60 rounded-full"></span>
-            </motion.div>
-        </motion.div>
-    </div>
-</div>
+                <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="text-center text-white px-4">
+                        
+                        {/* Bride Name - Top with word animation */}
+                        <motion.div 
+                            initial={{ opacity: 0, y: 30 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.8, delay: 0.3 }}
+                            className="mb-2 md:mb-4"
+                        >
+                            <h1 className="font-serif text-3xl sm:text-4xl md:text-6xl lg:text-7xl tracking-wide drop-shadow-lg">
+                                {data.couple.bride.split(' ').map((word, i) => (
+                                    <motion.span
+                                        key={i}
+                                        initial={{ opacity: 0, y: 30 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        transition={{ 
+                                            duration: 0.6, 
+                                            delay: 0.4 + (i * 0.1),
+                                            ease: "easeOut"
+                                        }}
+                                        className="inline-block mx-1"
+                                    >
+                                        {word}
+                                    </motion.span>
+                                ))}
+                            </h1>
+                        </motion.div>
+                        
+                        {/* & Symbol - Middle with special animation */}
+                        <motion.div
+                            initial={{ opacity: 0, scale: 0, rotate: -180 }}
+                            animate={{ opacity: 1, scale: 1, rotate: 0 }}
+                            transition={{ 
+                                duration: 0.8, 
+                                delay: 0.9,
+                                type: "spring",
+                                stiffness: 200,
+                                damping: 15
+                            }}
+                            className="my-1 md:my-2"
+                        >
+                            <span className="font-serif text-2xl sm:text-3xl md:text-5xl lg:text-6xl text-[#FFD700] drop-shadow-lg relative">
+                                &
+                                <motion.span
+                                    initial={{ opacity: 0, scale: 0 }}
+                                    animate={{ opacity: 1, scale: 1.5 }}
+                                    transition={{ duration: 0.4, delay: 1.1 }}
+                                    className="absolute inset-0 text-[#FFD700] blur-md"
+                                    style={{ zIndex: -1 }}
+                                >
+                                    &
+                                </motion.span>
+                            </span>
+                        </motion.div>
+                        
+                        {/* Groom Name - Bottom with word animation */}
+                        <motion.div 
+                            initial={{ opacity: 0, y: -30 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.8, delay: 1.2 }}
+                            className="mt-2 md:mt-4"
+                        >
+                            <h1 className="font-serif text-3xl sm:text-4xl md:text-6xl lg:text-7xl tracking-wide drop-shadow-lg">
+                                {data.couple.groom.split(' ').map((word, i) => (
+                                    <motion.span
+                                        key={i}
+                                        initial={{ opacity: 0, y: 30 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        transition={{ 
+                                            duration: 0.6, 
+                                            delay: 1.3 + (i * 0.1),
+                                            ease: "easeOut"
+                                        }}
+                                        className="inline-block mx-1"
+                                    >
+                                        {word}
+                                    </motion.span>
+                                ))}
+                            </h1>
+                        </motion.div>
+                        
+                        {/* Animated decorative line with shine effect */}
+                        <motion.div 
+                            initial={{ width: 0, opacity: 0 }}
+                            animate={{ width: "6rem", opacity: 1 }}
+                            transition={{ duration: 1, delay: 1.7 }}
+                            className="relative w-12 md:w-16 h-0.5 bg-white/80 mx-auto mt-4 md:mt-6 overflow-hidden"
+                        >
+                            <motion.div
+                                initial={{ x: "-100%" }}
+                                animate={{ x: "200%" }}
+                                transition={{ 
+                                    duration: 1.5, 
+                                    delay: 2.2,
+                                    repeat: Infinity,
+                                    repeatDelay: 3
+                                }}
+                                className="absolute inset-0 bg-white w-1/2 blur-sm"
+                            />
+                        </motion.div>
+                        
+                        {/* Date reveal with elegant entrance */}
+                        <motion.div
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.8, delay: 1.9 }}
+                        >
+                            <p className="text-sm md:text-base uppercase tracking-[0.3em] mt-4 md:mt-6 text-white/90 font-light">
+                                {data.wedding.date} {data.wedding.month} {data.wedding.year}
+                            </p>
+                            
+                            {/* Decorative dots */}
+                            <motion.div 
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                transition={{ duration: 0.6, delay: 2.1 }}
+                                className="flex justify-center gap-2 mt-2"
+                            >
+                                <span className="w-1 h-1 bg-white/60 rounded-full"></span>
+                                <span className="w-1 h-1 bg-white/60 rounded-full"></span>
+                                <span className="w-1 h-1 bg-white/60 rounded-full"></span>
+                            </motion.div>
+                        </motion.div>
+                    </div>
+                </div>
             </div>
 
             {/* CONTENT */}
@@ -289,6 +338,7 @@ function WeddingPage() {
                     </motion.h2>
                 </motion.div>
 
+                {/* WEDDING DETAILS */}
                 <motion.div 
                     initial={{ opacity: 0, y: 30 }}
                     whileInView={{ opacity: 1, y: 0 }}
@@ -296,34 +346,155 @@ function WeddingPage() {
                     transition={{ duration: 0.8, delay: 0.2 }}
                     className="space-y-2 md:space-y-4 text-gray-700"
                 >
+                    <p className="text-base md:text-lg font-medium text-[#328E6E]">
+                        Wedding Ceremony
+                    </p>
                     <p className="text-base md:text-lg">
                         {data.wedding.day}, {data.wedding.date}{" "}
                         {data.wedding.month} {data.wedding.year}
                     </p>
-
                     <p className="text-base md:text-lg">{data.wedding.time}</p>
-
                     <motion.p 
                         whileHover={{ scale: 1.05, color: "#328E6E" }}
                         className="text-base md:text-lg font-medium cursor-default"
                     >
                         {data.wedding.venue}
                     </motion.p>
+                    {data.wedding.note && (
+                        <p className="text-sm md:text-base text-gray-500 italic mt-2">
+                            {data.wedding.note}
+                        </p>
+                    )}
                 </motion.div>
 
-                {/* Reception */}
-                {data?.reception?.date && (
+                {/* RECEPTION DETAILS - Only show if available */}
+                {hasReception && (
+                    <motion.div 
+                        initial={{ opacity: 0, y: 30 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.8, delay: 0.3 }}
+                        className="mt-8 md:mt-10 pt-6 md:pt-8 border-t border-gray-200"
+                    >
+                        <div className="space-y-2 md:space-y-4 text-gray-700">
+                            <p className="text-base md:text-lg font-medium text-[#328E6E]">
+                                Reception
+                            </p>
+                            <p className="text-base md:text-lg">
+                                {data.reception.day}, {data.reception.date}{" "}
+                                {data.reception.month} {data.reception.year}
+                            </p>
+                            <p className="text-base md:text-lg">{data.reception.time}</p>
+                            <motion.p 
+                                whileHover={{ scale: 1.05, color: "#328E6E" }}
+                                className="text-base md:text-lg font-medium cursor-default"
+                            >
+                                {data.reception.venue}
+                            </motion.p>
+                        </div>
+                    </motion.div>
+                )}
+
+                {/* LOCATIONS SECTION - Show both wedding and reception locations */}
+                {(weddingMapUrl || receptionMapUrl) && (
                     <motion.div 
                         initial={{ opacity: 0, y: 30 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
                         transition={{ duration: 0.8, delay: 0.4 }}
-                        className="mt-8 md:mt-10 pt-6 md:pt-8 border-t border-gray-200"
+                        className="mt-12 md:mt-16 pt-6 md:pt-8 border-t border-gray-200"
                     >
-                        <p className="text-sm text-gray-500 mb-2">Reception</p>
-                        <p className="text-base md:text-lg text-gray-700">
-                            {data.reception.date}
-                        </p>
+                        <h3 className="text-xl md:text-2xl font-serif text-gray-800 mb-6 md:mb-8">
+                            Locations
+                        </h3>
+                        
+                        <div className={`grid ${weddingMapUrl && receptionMapUrl ? 'grid-cols-1 md:grid-cols-2' : 'grid-cols-1'} gap-6 md:gap-8 max-w-4xl mx-auto`}>
+                            
+                            {/* Wedding Location */}
+                            {weddingMapUrl && (
+                                <motion.div 
+                                    initial={{ opacity: 0, x: -30 }}
+                                    whileInView={{ opacity: 1, x: 0 }}
+                                    viewport={{ once: true }}
+                                    transition={{ duration: 0.6, delay: 0.5 }}
+                                    className="flex flex-col items-center p-4 md:p-6 bg-gray-50 rounded-lg"
+                                >
+                                    <div className="w-12 h-12 md:w-16 md:h-16 bg-[#328E6E]/10 rounded-full flex items-center justify-center mb-3">
+                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 md:h-8 md:w-8 text-[#328E6E]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                                        </svg>
+                                    </div>
+                                    <h4 className="text-lg md:text-xl font-medium text-gray-800 mb-2">
+                                        Wedding Venue
+                                    </h4>
+                                    <p className="text-sm md:text-base text-gray-600 mb-4 text-center">
+                                        {data.wedding.venue}
+                                    </p>
+                                    <motion.a
+                                        href={weddingMapUrl}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        whileHover={{ scale: 1.05 }}
+                                        whileTap={{ scale: 0.95 }}
+                                        className="inline-flex items-center gap-2 py-2 px-4 bg-[#328E6E] text-white text-sm md:text-base rounded-full hover:bg-[#266d56] transition"
+                                    >
+                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                                        </svg>
+                                        Wedding Map
+                                    </motion.a>
+                                </motion.div>
+                            )}
+                            
+                            {/* Reception Location - Only show if available */}
+                            {receptionMapUrl && (
+                                <motion.div 
+                                    initial={{ opacity: 0, x: 30 }}
+                                    whileInView={{ opacity: 1, x: 0 }}
+                                    viewport={{ once: true }}
+                                    transition={{ duration: 0.6, delay: 0.6 }}
+                                    className="flex flex-col items-center p-4 md:p-6 bg-gray-50 rounded-lg"
+                                >
+                                    <div className="w-12 h-12 md:w-16 md:h-16 bg-[#4AA3A2]/10 rounded-full flex items-center justify-center mb-3">
+                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 md:h-8 md:w-8 text-[#4AA3A2]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 15.546c-.523 0-1.046.151-1.5.454a2.704 2.704 0 01-3 0 2.704 2.704 0 00-3 0 2.704 2.704 0 01-3 0 2.704 2.704 0 00-3 0 2.704 2.704 0 01-3 0 2.701 2.701 0 00-1.5-.454M9 6v2m3-2v2m3-2v2M9 3h.01M12 3h.01M15 3h.01M21 21v-7a2 2 0 00-2-2H5a2 2 0 00-2 2v7h18z" />
+                                        </svg>
+                                    </div>
+                                    <h4 className="text-lg md:text-xl font-medium text-gray-800 mb-2">
+                                        Reception Venue
+                                    </h4>
+                                    <p className="text-sm md:text-base text-gray-600 mb-4 text-center">
+                                        {data.reception.venue}
+                                    </p>
+                                    <motion.a
+                                        href={receptionMapUrl}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        whileHover={{ scale: 1.05 }}
+                                        whileTap={{ scale: 0.95 }}
+                                        className="inline-flex items-center gap-2 py-2 px-4 bg-[#4AA3A2] text-white text-sm md:text-base rounded-full hover:bg-[#3a8281] transition"
+                                    >
+                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                                        </svg>
+                                        Reception Map
+                                    </motion.a>
+                                </motion.div>
+                            )}
+                        </div>
+                        
+                        {/* Decorative element */}
+                        <motion.div 
+                            initial={{ opacity: 0, scale: 0 }}
+                            whileInView={{ opacity: 1, scale: 1 }}
+                            viewport={{ once: true }}
+                            transition={{ duration: 0.8, delay: 0.7 }}
+                            className="flex justify-center mt-8"
+                        >
+                            <div className="w-16 h-0.5 bg-gradient-to-r from-transparent via-[#328E6E] to-transparent"></div>
+                        </motion.div>
                     </motion.div>
                 )}
 
@@ -474,32 +645,6 @@ function WeddingPage() {
                         className="w-64 sm:w-80 md:w-96 h-12 md:h-16"
                     />
                 </motion.div>
-
-                {/* LOCATION SECTION */}
-                {googleMapsUrl && (
-                    <motion.div 
-                        initial={{ opacity: 0, y: 30 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true }}
-                        transition={{ duration: 0.8, delay: 0.6 }}
-                        className="mt-12 md:mt-16"
-                    >
-                        <h3 className="text-xl md:text-2xl font-serif text-gray-800 mb-6 md:mb-8">
-                            Location
-                        </h3>
-
-                        <motion.a
-                            href={googleMapsUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            whileHover={{ scale: 1.05, boxShadow: "0 10px 25px rgba(50,142,110,0.3)" }}
-                            whileTap={{ scale: 0.95 }}
-                            className="inline-block py-2 md:py-3 px-4 md:px-6 bg-[#328E6E] text-white text-sm md:text-base rounded-full hover:bg-[#266d56] transition"
-                        >
-                            Open in Google Maps
-                        </motion.a>
-                    </motion.div>
-                )}
 
                 {/* FOOTER */}
                 <motion.div 
