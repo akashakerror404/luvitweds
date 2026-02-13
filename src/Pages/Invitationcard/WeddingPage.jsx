@@ -5,6 +5,7 @@ import Lottie from "lottie-react";
 import invitation from '../../assets/Invitation/invitation.jpg'
 import { motion } from "framer-motion";
 import { Helmet } from "react-helmet";
+import song from '../../assets/Invitation/song.mp3'
 
 // Import Lottie animations (you'll need to add these files to your project)
 import heartAnimation from "./animations/weddingfloral.json";
@@ -23,6 +24,9 @@ function WeddingPage() {
     });
     
     const [showConfetti, setShowConfetti] = React.useState(false);
+    const [isMusicPlaying, setIsMusicPlaying] = React.useState(false);
+    const [showMusicPrompt, setShowMusicPrompt] = React.useState(true);
+    const audioRef = React.useRef(null);
 
     React.useEffect(() => {
         if (!data?.wedding) return;
@@ -60,6 +64,51 @@ function WeddingPage() {
         return () => clearInterval(interval);
     }, [data]);
 
+    // Auto-play music when component mounts
+    React.useEffect(() => {
+        // Create audio element
+        audioRef.current = new Audio(song);
+        audioRef.current.loop = true;
+        
+        // Attempt to autoplay (may be blocked by browsers)
+        const playPromise = audioRef.current.play();
+        
+        if (playPromise !== undefined) {
+            playPromise
+                .then(() => {
+                    // Autoplay started successfully
+                    setIsMusicPlaying(true);
+                    setShowMusicPrompt(false);
+                })
+                .catch(error => {
+                    // Autoplay was prevented
+                    console.log("Autoplay prevented:", error);
+                    setIsMusicPlaying(false);
+                    setShowMusicPrompt(true);
+                });
+        }
+
+        // Cleanup function to pause music when component unmounts
+        return () => {
+            if (audioRef.current) {
+                audioRef.current.pause();
+                audioRef.current = null;
+            }
+        };
+    }, []); // Empty dependency array means this runs once when component mounts
+
+    const toggleMusic = () => {
+        if (audioRef.current) {
+            if (isMusicPlaying) {
+                audioRef.current.pause();
+            } else {
+                audioRef.current.play();
+            }
+            setIsMusicPlaying(!isMusicPlaying);
+            setShowMusicPrompt(false);
+        }
+    };
+
     if (!data) {
         return (
             <div className="min-h-screen flex items-center justify-center bg-white">
@@ -96,6 +145,56 @@ function WeddingPage() {
     return (
         <main className="min-h-screen bg-white overflow-hidden">
             
+            {/* Music Player Button */}
+            <motion.button
+                initial={{ scale: 0, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                transition={{ duration: 0.5, delay: 1 }}
+                onClick={toggleMusic}
+                className="fixed bottom-6 right-6 z-50 bg-white rounded-full shadow-lg p-3 md:p-4 hover:shadow-xl transition-shadow"
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+            >
+                {isMusicPlaying ? (
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 md:h-6 md:w-6 text-[#328E6E]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
+                    </svg>
+                ) : (
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 md:h-6 md:w-6 text-[#328E6E]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2" />
+                    </svg>
+                )}
+            </motion.button>
+
+            {/* Music Prompt for browsers that block autoplay */}
+            {showMusicPrompt && !isMusicPlaying && (
+                <motion.div
+                    initial={{ y: 100, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    exit={{ y: 100, opacity: 0 }}
+                    className="fixed bottom-20 right-6 z-50 bg-white rounded-lg shadow-xl p-4 max-w-xs"
+                >
+                    <p className="text-sm text-gray-700 mb-3">
+                        🎵 Would you like to play the wedding music?
+                    </p>
+                    <div className="flex gap-2">
+                        <button
+                            onClick={toggleMusic}
+                            className="flex-1 bg-[#328E6E] text-white text-sm py-2 px-3 rounded-lg hover:bg-[#266d56] transition"
+                        >
+                            Play Music
+                        </button>
+                        <button
+                            onClick={() => setShowMusicPrompt(false)}
+                            className="flex-1 bg-gray-100 text-gray-700 text-sm py-2 px-3 rounded-lg hover:bg-gray-200 transition"
+                        >
+                            No, thanks
+                        </button>
+                    </div>
+                </motion.div>
+            )}
+
             {/* Helmet Meta Tags for SEO and Social Sharing */}
             <Helmet>
                 {/* Primary Meta Tags */}
@@ -150,6 +249,7 @@ function WeddingPage() {
                 </motion.div>
             )}
 
+            {/* Rest of your component remains exactly the same */}
             {/* HERO SECTION */}
             <div className="relative h-[60vh] md:h-[80vh] overflow-hidden">
                 
@@ -186,7 +286,7 @@ function WeddingPage() {
                 {/* Gradient Overlay */}
                 <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/20 to-black/30"></div>
 
-                {/* Hero Text with Framer Motion - UPDATED SECTION */}
+                {/* Hero Text with Framer Motion */}
                 <div className="absolute inset-0 flex items-center justify-center">
                     <div className="text-center text-white px-4">
                         
@@ -769,7 +869,7 @@ function WeddingPage() {
                 </motion.div>
             </div>
 
-            {/* Custom CSS Animations (keep only the ones not replaced by Framer Motion) */}
+            {/* Custom CSS Animations */}
             <style jsx>{`
                 @keyframes float {
                     0%, 100% { transform: translateY(0px); }
