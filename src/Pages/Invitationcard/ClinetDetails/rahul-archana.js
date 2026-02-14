@@ -9,6 +9,7 @@ const rahulArchana = {
 
     images: {
       mobile: invitation,
+      
       desktop: invitation,
     },
   },

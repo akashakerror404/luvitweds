@@ -1,4 +1,4 @@
-import invitation from '../../../assets/Invitation/invitation.jpg'
+import invitation from '../../../assets/Invitation/SREE.jpg'
 
 const sreelakshmi = {
   slug: "sreelakshmi-anirudh",
