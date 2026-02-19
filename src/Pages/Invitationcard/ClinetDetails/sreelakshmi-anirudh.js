@@ -22,7 +22,7 @@ const sreelakshmi = {
     month: "February",
     year: "2026",
     time: "12:08 PM - 01:00 PM",
-    venue: "Bride's Residence, Payyoli, Calicut, Kerala",
+    venue: "Bride's Residence, Purakkad , Calicut, Kerala",
 
     mapLocation:
       "https://www.google.com/maps?q=11.4923886,75.6491204&z=17&hl=en",
