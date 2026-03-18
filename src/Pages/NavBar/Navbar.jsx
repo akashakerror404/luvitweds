@@ -1,97 +1,140 @@
-import React, { useState,useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 
 function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const [scrolled, setScrolled] = useState(false)
   const navigate = useNavigate();
   const location = useLocation()
-  const [istrue, setistrue] = useState(false)
+  const isHomePage = location.pathname === '/';
 
   const menuItems = ['Home', 'Gallery', 'Packages', 'About', 'Our Team']
+
+  // Handle scroll effect for navbar background
   useEffect(() => {
-    setistrue(location.pathname === '/');
-  }, [location.pathname]);
-  
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 50)
+    }
+    window.addEventListener('scroll', handleScroll)
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
 
   return (
-    <div className="bg-white">
-      {/* Company Logo */}
-      <div className="fixed top-4 left-4 z-50 cursor-pointer" >
-        <h1 className="text-3xl font-playfair text-[#328E6E] font-bold tracking-wider"
-        onClick={() => navigate('/')}>
-          LUVIT <span className="text-[#67AE6E]">WEDS</span>
-        </h1>
-        {istrue && <p className="text-sm text-gray-600 font-montserrat mt-1">Creating Timeless Memories</p>}
-       
-      </div>
+    <>
+      <nav className={`fixed top-0 left-0 w-full z-50 transition-all duration-500 ${
+        scrolled ? 'bg-[#f0e9e0]/90 backdrop-blur-md py-4 shadow-sm' : 'bg-transparent py-6'
+      }`}>
+        <div className="max-w-[1400px] mx-auto px-6 md:px-12 flex justify-between items-center">
+          
+          {/* Company Logo */}
+          <div 
+            className="cursor-pointer group" 
+            onClick={() => navigate('/')}
+          >
+            <h1 className={`text-2xl md:text-3xl font-playfair transition-colors duration-300 ${
+              scrolled || !isHomePage ? 'text-[#2d2d2d]' : 'text-white'
+            }`}>
+              LUVIT <span className="opacity-70">WEDS</span>
+            </h1>
+            <AnimatePresence>
+              {isHomePage && !scrolled && (
+                <motion.p 
+                  initial={{ opacity: 0, y: -5 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0 }}
+                  className="text-[9px] tracking-[0.3em] uppercase text-white/70 font-montserrat mt-1"
+                >
+                  Creating Timeless Memories
+                </motion.p>
+              )}
+            </AnimatePresence>
+          </div>
 
-      {/* Menu Button */}
-      <motion.button
-        whileHover={{ scale: 1.1 }}
-        whileTap={{ scale: 0.9 }}
-        onClick={() => setIsMenuOpen(true)}
-        className="fixed top-4 right-4 z-50 p-3 bg-[#328E6E] text-white rounded-full shadow-lg hover:bg-[#67AE6E] transition-all duration-300"
-      >
-        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-        </svg>
-      </motion.button>
+          {/* Minimalist Menu Trigger */}
+          <button
+            onClick={() => setIsMenuOpen(true)}
+            className="group flex items-center gap-3 outline-none"
+          >
+            <span className={`hidden md:block text-[10px] tracking-[0.3em] uppercase font-montserrat transition-colors ${
+              scrolled || !isHomePage ? 'text-[#2d2d2d]' : 'text-white'
+            }`}>
+              Menu
+            </span>
+            <div className="space-y-1.5">
+              <span className={`block w-6 h-[1px] transition-colors ${scrolled || !isHomePage ? 'bg-[#2d2d2d]' : 'bg-white'}`}></span>
+              <span className={`block w-4 h-[1px] transition-colors ${scrolled || !isHomePage ? 'bg-[#2d2d2d]' : 'bg-white'}`}></span>
+            </div>
+          </button>
+        </div>
+      </nav>
 
-      {/* Menu Overlay */}
+      {/* Full Screen Menu Overlay */}
       <AnimatePresence>
         {isMenuOpen && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center backdrop-blur-sm"
+            className="fixed inset-0 bg-[#f0e9e0] z-[60] flex items-center justify-center"
           >
-            <motion.div
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.9, opacity: 0 }}
-              className="bg-white/95 rounded-3xl shadow-2xl w-[90%] max-w-md mx-4 relative overflow-hidden"
+            {/* Close Button */}
+            <button
+              onClick={() => setIsMenuOpen(false)}
+              className="absolute top-8 right-8 md:top-12 md:right-12 p-2 group"
             >
-              <motion.button
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
-                onClick={() => setIsMenuOpen(false)}
-                className="absolute top-4 right-4 p-2 text-gray-600 hover:text-gray-900"
-              >
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </motion.button>
-
-              <div className="p-8">
-                <h2 className="text-3xl font-playfair text-[#328E6E] mb-2 text-center">LUVIT WEDS</h2>
-                <p className="text-center text-gray-600 mb-8 font-montserrat">Your Dream Wedding Awaits</p>
-                <div className="space-y-4">
-                  {menuItems.map((item, i) => (
-                    <motion.div
-                      key={i}
-                      initial={{ x: -20, opacity: 0 }}
-                      animate={{ x: 0, opacity: 1 }}
-                      transition={{ delay: i * 0.1 }}
-                    >
-                      <Link
-                        to={item === 'Home' ? '/' : `/${item.toLowerCase().replace(' ', '-')}`}
-                        className="flex items-center py-3 px-4 rounded-lg hover:bg-[#E1EEBC]/20 transition-all duration-300"
-                        onClick={() => setIsMenuOpen(false)}
-                      >
-                        <span className="w-2 h-2 rounded-full bg-[#328E6E] mr-4"></span>
-                        <span className="text-xl font-montserrat text-gray-800 hover:text-[#328E6E]">{item}</span>
-                      </Link>
-                    </motion.div>
-                  ))}
-                </div>
+              <div className="relative w-8 h-8 flex items-center justify-center">
+                <span className="absolute block w-8 h-[1px] bg-[#2d2d2d] rotate-45 group-hover:rotate-[135deg] transition-transform duration-500"></span>
+                <span className="absolute block w-8 h-[1px] bg-[#2d2d2d] -rotate-45 group-hover:rotate-[225deg] transition-transform duration-500"></span>
               </div>
-            </motion.div>
+            </button>
+
+            {/* Menu Links */}
+            <div className="text-center">
+              <motion.p 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="text-[10px] tracking-[0.5em] uppercase text-gray-400 mb-12"
+              >
+                Navigation
+              </motion.p>
+              
+              <div className="space-y-6 md:space-y-8">
+                {menuItems.map((item, i) => (
+                  <motion.div
+                    key={i}
+                    initial={{ y: 30, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    transition={{ delay: i * 0.1 + 0.2 }}
+                  >
+                    <Link
+                      to={item === 'Home' ? '/' : `/${item.toLowerCase().replace(' ', '-')}`}
+                      className="text-4xl md:text-6xl font-playfair text-[#2d2d2d] hover:text-[#8ba88e] transition-colors relative group inline-block"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      {item}
+                      <span className="absolute -bottom-2 left-0 w-0 h-[1px] bg-[#8ba88e] group-hover:w-full transition-all duration-500"></span>
+                    </Link>
+                  </motion.div>
+                ))}
+              </div>
+
+              {/* Footer Info in Menu */}
+              <motion.div 
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.8 }}
+                className="mt-20 pt-10 border-t border-black/5"
+              >
+                <p className="text-[10px] tracking-widest uppercase text-gray-500 font-montserrat">
+                  Based in Kerala — Available Worldwide
+                </p>
+              </motion.div>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
-    </div>
+    </>
   )
 }
 

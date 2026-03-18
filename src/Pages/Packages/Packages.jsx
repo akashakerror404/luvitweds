@@ -1,280 +1,133 @@
 import React from 'react'
 import { motion } from 'framer-motion'
-import PLATINUM from '../../assets/PACKAGES/WEDDING/PLATINUM.pdf'
-import DIAMOND from '../../assets/PACKAGES/WEDDING/DIAMOND.pdf'
-import GOLD from '../../assets/PACKAGES/WEDDING/GOLD.pdf'
-import sectionOne1 from '../../assets/GALLERY/SECTION_ONE/sectionone (1).jpg';
-import packg3 from '../../assets/GALLERY/SECTION_TWO/sectiontwo (42).jpg'
-import packg5 from '../../assets/GALLERY/SECTION_TWO/sectiontwo (32).jpg'
 
-// ENGAGEMENT
-import ENGAGEMENTPLATINUM from '../../assets/PACKAGES/ENGAGEMENT/PLATINUM.pdf'
-import ENGAGEMENTDIAMOND from '../../assets/PACKAGES/ENGAGEMENT/DIAMOND.pdf'
-import ENGAGEMENTGOLD from '../../assets/PACKAGES/ENGAGEMENT/GOLD.pdf'
-import eng1 from '../../assets/GALLERY/SECTION_TWO/sectiontwo (88).jpg';
-import eng2 from '../../assets/GALLERY/SECTION_TWO/sectiontwo (60).jpg'
-import eng3 from '../../assets/GALLERY/SECTION_TWO/sectiontwo (111).jpg'
-
-
-
+// PDF IMPORTS
+import WEDDING_BROCHURE from '../../assets/PACKAGES/WEDDING/DIAMOND.pdf'
+import ENGAGEMENT_BROCHURE from '../../assets/PACKAGES/ENGAGEMENT/DIAMOND.pdf'
 
 function Packages() {
-  const packages = {
-    wedding: [
-      {
-        name: "PLATINUM",
-        description: "Our most luxurious package including full wedding planning, premium venues, and all premium services",
-        // price: "$15,000",
-        pdf: PLATINUM,
-        image: sectionOne1
-      },
-      {
-        name: "DIAMOND", 
-        description: "Complete wedding planning with beautiful venues and essential services",
-        // price: "$10,000",
-        pdf: DIAMOND,
-        image: packg3
-      },
-      {
-        name: "GOLD",
-        description: "Perfect for smaller weddings while maintaining elegance and style",
-        // price: "$7,000", 
-        pdf: GOLD,
-        image: packg5
-      }
-    ],
-    engagement: [
-      {
-        name: "Premium Engagement Package",
-        description: "Luxury engagement planning with top photographers and venues",
-        // price: "$3,000",
-        pdf: ENGAGEMENTPLATINUM,
-        image: eng1
-      },
-      {
-        name: "Exclusive Engagement Package",
-        description: "Beautiful engagement planning with professional services",
-        // price: "$2,000",
-        pdf: ENGAGEMENTDIAMOND,
-        image: eng2
-      },
-      {
-        name: "Classic Engagement Package",
-        description: "Beautiful engagement planning with professional services",
-        // price: "$2,000",
-        pdf: ENGAGEMENTGOLD,
-        image: eng3
-      }
-    ],
-    photoshoot: [
-      {
-        name: "Professional Model Portfolio",
-        description: "Complete modeling portfolio shoot with expert photographers",
-        price: "$1,500",
-        pdf: "/pdfs/model-portfolio-package.pdf",
-        image: "https://images.unsplash.com/photo-1591604466107-ec97de577aff"
-      },
-      {
-        name: "Baby Photography Package",
-        description: "Capture precious moments with your little one",
-        price: "$800",
-        pdf: "/pdfs/baby-photo-package.pdf",
-        image: "https://images.unsplash.com/photo-1519225421980-715cb0215aed"
-      }
-    ]
-  }
-
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white to-[#F8FAF0] py-20">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="text-center mb-16"
-        >
-          <h1 className="text-5xl md:text-6xl font-playfair text-[#328E6E] mb-6 drop-shadow-lg">
-            Our Packages
-          </h1>
-          <p className="text-xl text-gray-600 font-montserrat max-w-3xl mx-auto leading-relaxed">
-            Choose from our carefully curated packages designed to make your special moments unforgettable
-          </p>
-        </motion.div>
-
-        {/* Wedding Packages */}
-        <section className="mb-20">
-          <motion.h2 
+    <div className="min-h-screen bg-[#f0e9e0] text-[#2d2d2d] pt-32 pb-20 selection:bg-[#8ba88e] selection:text-white">
+      <div className="max-w-[1400px] mx-auto px-6 md:px-12 lg:px-20">
+        
+        {/* --- PAGE HEADER --- */}
+        <header className="mb-32">
+          <motion.span 
             initial={{ opacity: 0, x: -20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            className="text-3xl font-playfair text-[#328E6E] mb-8 drop-shadow-md"
+            animate={{ opacity: 1, x: 0 }}
+            className="text-[10px] tracking-[0.5em] uppercase text-[#8ba88e] font-montserrat font-bold block mb-4"
           >
-            Wedding Packages
-          </motion.h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {packages.wedding.map((pkg, index) => (
-              <motion.div
-                key={index}
+            Investment
+          </motion.span>
+          <motion.h1 
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="text-7xl md:text-9xl font-playfair leading-tight italic"
+          >
+            Collections <br />
+            <span className="not-italic">&</span> Pricing
+          </motion.h1>
+          <div className="h-[1px] bg-black/10 w-full mt-16" />
+        </header>
+
+        {/* --- WEDDING SECTION --- */}
+        <section className="mb-48">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+            <div className="lg:col-span-7">
+              <motion.h2 
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                whileHover={{ y: -10 }}
-                transition={{ delay: index * 0.2 }}
-                className="bg-white rounded-2xl shadow-xl overflow-hidden hover:shadow-2xl transition-all duration-300"
+                viewport={{ once: true }}
+                className="text-5xl md:text-7xl font-playfair lowercase italic mb-8"
               >
-                <div className="h-48 overflow-hidden">
-                  <img 
-                    src={pkg.image} 
-                    alt={pkg.name}
-                    className="w-full h-full object-cover transform hover:scale-110 transition-transform duration-500"
-                  />
-                </div>
-                <div className="p-8">
-                  <h3 className="text-2xl font-playfair text-[#328E6E] mb-4">{pkg.name}</h3>
-                  <p className="text-gray-600 mb-4 min-h-[60px]">{pkg.description}</p>
-                  <p className="text-2xl font-playfair text-[#67AE6E] mb-6">{pkg.price}</p>
-                  <a 
-                    href={pkg.pdf}
-                    className="inline-block bg-[#328E6E] text-white px-6 py-3 rounded-full hover:bg-[#67AE6E] transition-colors duration-300 shadow-md hover:shadow-lg"
-                    download
-                  >
-                    Download Details
-                  </a>
-                </div>
-              </motion.div>
-            ))}
+                wedding collections
+              </motion.h2>
+              <motion.p 
+                initial={{ opacity: 0 }}
+                whileInView={{ opacity: 1 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.3 }}
+                className="font-montserrat text-sm md:text-base text-gray-500 leading-relaxed max-w-xl italic mb-12"
+              >
+                Our wedding collections are meticulously crafted to preserve the grandeur of your union. From our Platinum Heritage to the Timeless Gold essence, explore our complete tier structures in the collective guide.
+              </motion.p>
+            </div>
+
+            <div className="lg:col-span-5 lg:flex lg:justify-end">
+              <motion.a 
+                href={WEDDING_BROCHURE}
+                download
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="group relative flex items-center justify-between gap-12 text-[10px] tracking-[0.5em] uppercase border border-black/20 px-10 py-8 transition-all duration-500 hover:bg-[#2d2d2d] hover:text-white"
+              >
+                <span className="relative z-10">Download Wedding Catalog</span>
+                <svg className="w-5 h-5 relative z-10 transition-transform group-hover:translate-y-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                </svg>
+              </motion.a>
+            </div>
+          </div>
+          <div className="h-[1px] bg-black/5 w-full mt-24" />
+        </section>
+
+        {/* --- ENGAGEMENT SECTION --- */}
+        <section className="mb-32">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+            <div className="lg:col-span-7">
+              <motion.h2 
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                className="text-5xl md:text-7xl font-playfair lowercase italic mb-8"
+              >
+                engagement films
+              </motion.h2>
+              <motion.p 
+                initial={{ opacity: 0 }}
+                whileInView={{ opacity: 1 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.3 }}
+                className="font-montserrat text-sm md:text-base text-gray-500 leading-relaxed max-w-xl italic mb-12"
+              >
+                A cinematic approach to your pre-wedding narrative. We focus on the chemistry, the landscape, and the unspoken promises. View our comprehensive engagement film guide.
+              </motion.p>
+            </div>
+
+            <div className="lg:col-span-5 lg:flex lg:justify-end">
+              <motion.a 
+                href={ENGAGEMENT_BROCHURE}
+                download
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="group relative flex items-center justify-between gap-12 text-[10px] tracking-[0.5em] uppercase border border-black/20 px-10 py-8 transition-all duration-500 hover:bg-[#2d2d2d] hover:text-white"
+              >
+                <span className="relative z-10">Download Engagement Collective</span>
+                <svg className="w-5 h-5 relative z-10 transition-transform group-hover:translate-y-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                </svg>
+              </motion.a>
+            </div>
           </div>
         </section>
 
-
-
-        <section className="mb-20">
+        {/* --- FOOTER CTA --- */}
+        <footer className="mt-60 text-center relative">
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1px] h-32 bg-[#8ba88e] opacity-30 -translate-y-full" />
           <motion.h2 
-            initial={{ opacity: 0, x: -20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            className="text-3xl font-playfair text-[#328E6E] mb-8 drop-shadow-md"
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            className="text-4xl md:text-6xl font-playfair italic mb-12"
           >
-           Engagement Packages
+            Ready to craft your story?
           </motion.h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {packages.engagement.map((pkg, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                whileHover={{ y: -10 }}
-                transition={{ delay: index * 0.2 }}
-                className="bg-white rounded-2xl shadow-xl overflow-hidden hover:shadow-2xl transition-all duration-300"
-              >
-                <div className="h-48 overflow-hidden">
-                  <img 
-                    src={pkg.image} 
-                    alt={pkg.name}
-                    className="w-full h-full object-cover transform hover:scale-110 transition-transform duration-500"
-                  />
-                </div>
-                <div className="p-8">
-                  <h3 className="text-2xl font-playfair text-[#328E6E] mb-4">{pkg.name}</h3>
-                  <p className="text-gray-600 mb-4 min-h-[60px]">{pkg.description}</p>
-                  <p className="text-2xl font-playfair text-[#67AE6E] mb-6">{pkg.price}</p>
-                  <a 
-                    href={pkg.pdf}
-                    className="inline-block bg-[#328E6E] text-white px-6 py-3 rounded-full hover:bg-[#67AE6E] transition-colors duration-300 shadow-md hover:shadow-lg"
-                    download
-                  >
-                    Download Details
-                  </a>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </section>
-
-        {/* Engagement Packages */}
-        {/* <section className="mb-20">
-          <motion.h2
-            initial={{ opacity: 0, x: -20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            className="text-3xl font-playfair text-[#328E6E] mb-8 drop-shadow-md"
-          >
-            Engagement Packages
-          </motion.h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {packages.engagement.map((pkg, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                whileHover={{ y: -10 }}
-                transition={{ delay: index * 0.2 }}
-                className="bg-white rounded-2xl shadow-xl overflow-hidden hover:shadow-2xl transition-all duration-300"
-              >
-                <div className="h-48 overflow-hidden">
-                  <img 
-                    src={pkg.image} 
-                    alt={pkg.name}
-                    className="w-full h-full object-cover transform hover:scale-110 transition-transform duration-500"
-                  />
-                </div>
-                <div className="p-8">
-                  <h3 className="text-2xl font-playfair text-[#328E6E] mb-4">{pkg.name}</h3>
-                  <p className="text-gray-600 mb-4 min-h-[60px]">{pkg.description}</p>
-                  <p className="text-2xl font-playfair text-[#67AE6E] mb-6">{pkg.price}</p>
-                  <a 
-                    href={pkg.pdf}
-                    className="inline-block bg-[#328E6E] text-white px-6 py-3 rounded-full hover:bg-[#67AE6E] transition-colors duration-300 shadow-md hover:shadow-lg"
-                    download
-                  >
-                    Download Details
-                  </a>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </section> */}
-
-        {/* Photography Packages */}
-        {/* <section>
-          <motion.h2
-            initial={{ opacity: 0, x: -20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            className="text-3xl font-playfair text-[#328E6E] mb-8 drop-shadow-md"
-          >
-            Photography Packages
-          </motion.h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {packages.photoshoot.map((pkg, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                whileHover={{ y: -10 }}
-                transition={{ delay: index * 0.2 }}
-                className="bg-white rounded-2xl shadow-xl overflow-hidden hover:shadow-2xl transition-all duration-300"
-              >
-                <div className="h-48 overflow-hidden">
-                  <img 
-                    src={pkg.image} 
-                    alt={pkg.name}
-                    className="w-full h-full object-cover transform hover:scale-110 transition-transform duration-500"
-                  />
-                </div>
-                <div className="p-8">
-                  <h3 className="text-2xl font-playfair text-[#328E6E] mb-4">{pkg.name}</h3>
-                  <p className="text-gray-600 mb-4 min-h-[60px]">{pkg.description}</p>
-                  <p className="text-2xl font-playfair text-[#67AE6E] mb-6">{pkg.price}</p>
-                  <a 
-                    href={pkg.pdf}
-                    className="inline-block bg-[#328E6E] text-white px-6 py-3 rounded-full hover:bg-[#67AE6E] transition-colors duration-300 shadow-md hover:shadow-lg"
-                    download
-                  >
-                    Download Details
-                  </a>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </section> */}
+          <button className="text-[10px] tracking-[0.7em] uppercase border border-black px-16 py-6 hover:bg-black hover:text-white transition-all duration-700">
+            Request a Custom Quote
+          </button>
+        </footer>
       </div>
     </div>
   )
 }
 
-export default Packages
+export default Packages;

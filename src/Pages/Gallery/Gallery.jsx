@@ -1,12 +1,7 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
-import { Swiper, SwiperSlide } from 'swiper/react'
-import { Navigation as SwiperNavigation, Pagination as SwiperPagination, Autoplay as SwiperAutoplay, EffectCreative as SwiperEffectCreative } from 'swiper/modules'
-import 'swiper/css'
-import 'swiper/css/navigation'
-import 'swiper/css/pagination'
+import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react'
+import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion'
 
-// Import only the initial images needed for the hero section
+// Hero Asset imports
 import sectionOne1 from '../../assets/GALLERY/SECTION_ONE/sectionone (1).jpg';
 import sectionOne2 from '../../assets/GALLERY/SECTION_ONE/sectionone (2).jpg';
 import sectionOne3 from '../../assets/GALLERY/SECTION_ONE/sectionone (3).jpg';
@@ -14,470 +9,587 @@ import sectionOne4 from '../../assets/GALLERY/SECTION_ONE/sectionone (4).jpg';
 import sectionOne6 from '../../assets/GALLERY/SECTION_ONE/sectionone (6).jpg';
 import sectionOne7 from '../../assets/GALLERY/SECTION_ONE/sectionone (7).jpg';
 
+const heroImages = [sectionOne1, sectionOne2, sectionOne3, sectionOne4, sectionOne6, sectionOne7];
+
+/* ─── Styles ─── */
+const GalleryStyles = () => (
+  <style>{`
+    @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Unbounded:wght@200;300&family=Alex+Brush&display=swap');
+
+    :root {
+      --cream:   #f8f4ee;
+      --parchment: #efe8dc;
+      --blush:   #e4cfc0;
+      --rose:    #c4856b;
+      --mink:    #8c7b70;
+      --ink:     #231f1b;
+      --white:   #fdfaf6;
+    }
+
+    .gallery-root {
+      font-family: 'Cormorant Garamond', serif;
+      background: var(--cream);
+      color: var(--ink);
+      overflow-x: hidden;
+      cursor: crosshair;
+    }
+
+    /* ── Grain ── */
+    .gallery-root::before {
+      content: '';
+      position: fixed; inset: 0; z-index: 9998;
+      pointer-events: none; opacity: 0.028;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      background-size: 160px;
+    }
+
+    /* ─── MASTHEAD ─── */
+    .gal-masthead {
+      padding: clamp(80px,12vw,160px) clamp(24px,6vw,88px) 0;
+      max-width: 1440px; margin: 0 auto;
+    }
+    .gal-eyebrow {
+      display: flex; align-items: center; gap: 18px;
+      font-family: 'Unbounded', sans-serif;
+      font-size: 8px; font-weight: 200;
+      letter-spacing: 0.55em; text-transform: uppercase;
+      color: var(--mink); margin-bottom: 32px;
+    }
+    .gal-eyebrow-line { flex: 0 0 36px; height: 1px; background: var(--blush); }
+
+    .gal-title-row {
+      display: flex; align-items: flex-end;
+      justify-content: space-between; gap: 24px;
+      flex-wrap: wrap;
+      border-bottom: 1px solid rgba(35,31,27,0.08);
+      padding-bottom: clamp(32px, 5vw, 64px);
+    }
+    .gal-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(64px, 11vw, 148px);
+      font-weight: 300; line-height: 0.88;
+      color: var(--ink); letter-spacing: -0.01em;
+    }
+    .gal-title em {
+      font-style: italic; color: var(--rose);
+    }
+    .gal-title-meta {
+      max-width: 280px; padding-bottom: 8px;
+    }
+    .gal-title-meta p {
+      font-size: 15px; font-weight: 300; font-style: italic;
+      color: var(--mink); line-height: 1.75; margin-bottom: 20px;
+    }
+    .gal-count {
+      font-family: 'Unbounded', sans-serif;
+      font-size: 9px; font-weight: 200; letter-spacing: 0.35em;
+      color: var(--rose); text-transform: uppercase;
+    }
+
+    /* ─── FILMSTRIP HERO ─── */
+    .filmstrip-wrap {
+      overflow: hidden; width: 100%;
+      padding: clamp(40px, 7vw, 80px) 0;
+      background: var(--cream);
+      position: relative;
+    }
+    .filmstrip-label {
+      font-family: 'Unbounded', sans-serif;
+      font-size: 8px; font-weight: 200; letter-spacing: 0.5em;
+      text-transform: uppercase; color: var(--mink);
+      padding: 0 clamp(24px, 6vw, 88px);
+      margin-bottom: 24px; display: block;
+    }
+    .filmstrip-track {
+      display: flex; gap: 12px;
+      animation: filmScroll 28s linear infinite;
+      width: max-content;
+      padding: 0 clamp(24px, 6vw, 88px);
+    }
+    .filmstrip-track:hover { animation-play-state: paused; }
+
+    @keyframes filmScroll {
+      0%   { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+
+    .filmstrip-frame {
+      position: relative; flex: 0 0 auto;
+      width: clamp(220px, 26vw, 380px);
+      aspect-ratio: 3/4; overflow: hidden;
+      cursor: pointer;
+    }
+    .filmstrip-frame.landscape {
+      aspect-ratio: 4/3;
+      width: clamp(300px, 36vw, 500px);
+    }
+    .filmstrip-frame img {
+      width: 100%; height: 100%; object-fit: cover;
+      filter: brightness(0.95) saturate(0.9);
+      transition: transform 0.9s cubic-bezier(0.22,1,0.36,1), filter 0.6s;
+    }
+    .filmstrip-frame:hover img {
+      transform: scale(1.06); filter: brightness(1) saturate(1.05);
+    }
+    .frame-number {
+      position: absolute; bottom: 10px; right: 14px;
+      font-family: 'Unbounded', sans-serif;
+      font-size: 7px; font-weight: 200; letter-spacing: 0.2em;
+      color: rgba(255,255,255,0.55); z-index: 2;
+    }
+    .filmstrip-frame::after {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(35,31,27,0.22) 0%, transparent 40%);
+      pointer-events: none;
+    }
+
+    /* ─── SECTION DIVIDER ─── */
+    .gal-divider {
+      display: flex; align-items: center; gap: 20px;
+      padding: clamp(48px, 7vw, 96px) clamp(24px, 6vw, 88px) clamp(32px, 5vw, 64px);
+      max-width: 1440px; margin: 0 auto;
+    }
+    .gal-div-num {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(72px, 10vw, 130px); font-weight: 300;
+      color: var(--parchment); line-height: 1;
+      flex-shrink: 0; user-select: none;
+    }
+    .gal-div-content { flex: 1; }
+    .gal-div-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(28px, 4vw, 52px);
+      font-weight: 300; font-style: italic;
+      color: var(--ink); line-height: 1.1; margin-bottom: 8px;
+    }
+    .gal-div-line { height: 1px; background: var(--blush); margin-top: 16px; }
+
+    /* ─── EDITORIAL GRID ─── */
+    .gal-grid-wrap {
+      padding: 0 clamp(24px, 6vw, 88px) clamp(80px, 12vw, 140px);
+      max-width: 1440px; margin: 0 auto;
+    }
+
+    /* LAYOUT A — 1 large + 2 tall stack */
+    .gal-layout-a {
+      display: grid;
+      grid-template-columns: 1.55fr 1fr;
+      grid-template-rows: auto auto;
+      gap: 10px; margin-bottom: 10px;
+    }
+    .gal-layout-a .cell-main {
+      grid-row: span 2; aspect-ratio: 2/3;
+    }
+    .gal-layout-a .cell-side { aspect-ratio: 4/3; }
+
+    /* LAYOUT B — 3 equal squares */
+    .gal-layout-b {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px; margin-bottom: 10px;
+    }
+    .gal-layout-b .cell { aspect-ratio: 1; }
+
+    /* LAYOUT C — wide banner + portrait */
+    .gal-layout-c {
+      display: grid;
+      grid-template-columns: 1fr 0.6fr;
+      gap: 10px; margin-bottom: 10px;
+    }
+    .gal-layout-c .cell-wide { aspect-ratio: 16/10; }
+    .gal-layout-c .cell-port { aspect-ratio: 3/4; }
+
+    /* LAYOUT D — 2 equal tall */
+    .gal-layout-d {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px; margin-bottom: 10px;
+    }
+    .gal-layout-d .cell { aspect-ratio: 3/4; }
+
+    /* LAYOUT E — full bleed single */
+    .gal-layout-e { margin-bottom: 10px; }
+    .gal-layout-e .cell-full { aspect-ratio: 21/9; }
+
+    @media (max-width: 768px) {
+      .gal-layout-a, .gal-layout-b, .gal-layout-c, .gal-layout-d {
+        grid-template-columns: 1fr 1fr;
+      }
+      .gal-layout-a .cell-main { grid-row: unset; aspect-ratio: 1; }
+      .gal-layout-e .cell-full { aspect-ratio: 4/3; }
+    }
+    @media (max-width: 480px) {
+      .gal-layout-a, .gal-layout-b, .gal-layout-c, .gal-layout-d {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* ─── Image Cell ─── */
+    .img-cell {
+      position: relative; overflow: hidden;
+      background: var(--parchment); cursor: pointer;
+    }
+    .img-cell img {
+      width: 100%; height: 100%; object-fit: cover;
+      display: block;
+      filter: brightness(0.97) saturate(0.92);
+      transition: transform 1s cubic-bezier(0.22,1,0.36,1), filter 0.7s;
+    }
+    .img-cell:hover img {
+      transform: scale(1.05);
+      filter: brightness(1.02) saturate(1.04);
+    }
+    .img-cell-overlay {
+      position: absolute; inset: 0; pointer-events: none;
+      background: linear-gradient(135deg, transparent 60%, rgba(35,31,27,0.08));
+      opacity: 0; transition: opacity 0.5s;
+    }
+    .img-cell:hover .img-cell-overlay { opacity: 1; }
+    .img-cell-tag {
+      position: absolute; bottom: 12px; left: 14px;
+      font-family: 'Unbounded', sans-serif;
+      font-size: 7px; font-weight: 200; letter-spacing: 0.35em;
+      color: rgba(255,255,255,0); text-transform: uppercase;
+      transition: color 0.5s; pointer-events: none;
+    }
+    .img-cell:hover .img-cell-tag { color: rgba(255,255,255,0.6); }
+
+    /* ─── LOAD MORE ─── */
+    .load-more-zone {
+      padding: clamp(40px, 6vw, 80px) clamp(24px, 6vw, 88px);
+      display: flex; align-items: center; justify-content: center; gap: 32px;
+    }
+    .load-line { flex: 1; height: 1px; background: var(--blush); max-width: 200px; }
+    .load-btn {
+      font-family: 'Unbounded', sans-serif; font-size: 9px; font-weight: 200;
+      letter-spacing: 0.42em; text-transform: uppercase;
+      color: var(--ink); background: transparent; border: none;
+      padding: 18px 40px; cursor: pointer; position: relative;
+      transition: color 0.3s;
+    }
+    .load-btn::before {
+      content: ''; position: absolute; inset: 0;
+      border: 1px solid rgba(35,31,27,0.18);
+      transition: border-color 0.4s, background 0.4s;
+    }
+    .load-btn:hover { color: var(--white); }
+    .load-btn:hover::before { background: var(--ink); border-color: var(--ink); }
+    .load-btn:disabled { opacity: 0.4; pointer-events: none; }
+
+    /* ─── LIGHTBOX ─── */
+    .lightbox-bg {
+      position: fixed; inset: 0; z-index: 9999;
+      background: rgba(245,240,233,0.97);
+      display: flex; align-items: center; justify-content: center;
+      padding: 40px;
+      backdrop-filter: blur(2px);
+    }
+    .lightbox-close {
+      position: fixed; top: 28px; right: 32px;
+      width: 40px; height: 40px;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; z-index: 10;
+    }
+    .lightbox-close span {
+      position: absolute; width: 24px; height: 1px; background: var(--ink);
+    }
+    .lightbox-close span:first-child { transform: rotate(45deg); }
+    .lightbox-close span:last-child { transform: rotate(-45deg); }
+    .lightbox-img {
+      max-width: min(88vw, 1100px);
+      max-height: 85vh;
+      object-fit: contain;
+      box-shadow: 0 40px 100px rgba(35,31,27,0.18);
+    }
+    .lightbox-nav {
+      position: fixed; bottom: 32px; left: 50%; transform: translateX(-50%);
+      display: flex; gap: 20px; align-items: center;
+      font-family: 'Unbounded', sans-serif;
+      font-size: 8px; letter-spacing: 0.4em; color: var(--mink);
+    }
+    .lightbox-nav-btn {
+      background: none; border: 1px solid var(--blush);
+      color: var(--ink); padding: 10px 24px; cursor: pointer;
+      font-family: 'Unbounded', sans-serif;
+      font-size: 8px; letter-spacing: 0.3em; text-transform: uppercase;
+      transition: background 0.3s, color 0.3s;
+    }
+    .lightbox-nav-btn:hover { background: var(--ink); color: var(--white); border-color: var(--ink); }
+
+    /* ─── FOOTER ─── */
+    .gal-footer {
+      border-top: 1px solid rgba(35,31,27,0.07);
+      padding: 32px clamp(24px, 6vw, 88px);
+      display: flex; justify-content: space-between; align-items: center;
+      flex-wrap: wrap; gap: 12px;
+    }
+    .gal-footer-logo {
+      font-family: 'Alex Brush', cursive; font-size: 26px; color: var(--mink);
+    }
+    .gal-footer-copy {
+      font-family: 'Unbounded', sans-serif; font-size: 7px;
+      font-weight: 200; letter-spacing: 0.35em; text-transform: uppercase; color: var(--blush);
+    }
+  `}</style>
+);
+
+/* ─── Image Cell component ─── */
+function ImgCell({ src, tag, onClick, className = '' }) {
+  return (
+    <motion.div
+      className={`img-cell ${className}`}
+      onClick={onClick}
+      initial={{ opacity: 0, y: 24 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: '-60px' }}
+      transition={{ duration: 0.85, ease: [0.22, 1, 0.36, 1] }}
+    >
+      <img src={src} alt="" loading="lazy" />
+      <div className="img-cell-overlay" />
+      {tag && <span className="img-cell-tag">{tag}</span>}
+    </motion.div>
+  );
+}
+
+/* ─── Main Component ─── */
 function Gallery() {
-  const [selectedImage, setSelectedImage] = useState(null);
   const [loadedImages, setLoadedImages] = useState([]);
-  const [visibleCount, setVisibleCount] = useState(20);
   const [isLoading, setIsLoading] = useState(false);
-  
-  // Initial hero images
-  const galleryImagessectionone = [
-    sectionOne1,
-    sectionOne2,
-    sectionOne3,
-    sectionOne4,
-    sectionOne6,
-    sectionOne7
-  ];
+  const [lightboxIndex, setLightboxIndex] = useState(null);
+  const [totalLoaded, setTotalLoaded] = useState(0);
+  const TOTAL = 111;
+  const BATCH = 15;
 
-  // Image data with captions - wrapped in useMemo to prevent recreation on every render
-  const imageData = useMemo(() => [
-    { id: 1, caption: "A moment captured forever." },
-    { id: 2, caption: "A walk to remember." },
-    { id: 3, caption: "The beauty of togetherness." },
-    { id: 4, caption: "In the arms of love." },
-    { id: 5, caption: "A love that feels like magic." },
-    { id: 6, caption: "Forever and always." },
-    { id: 7, caption: "A moment of pure joy." },
-    { id: 8, caption: "Forever united in love." },
-    { id: 9, caption: "The start of forever." },
-    { id: 10, caption: "A love that never fades." },
-    { id: 11, caption: "Love in every glance." },
-    { id: 12, caption: "A love like no other." },
-    { id: 13, caption: "Cherished forever." },
-    { id: 14, caption: "Unspoken promises in a glance." },
-    { id: 15, caption: "Two souls, one heart." },
-    { id: 16, caption: "The spark of love." },
-    { id: 17, caption: "Sealed with a kiss." },
-    { id: 18, caption: "Moments that matter." },
-    { id: 19, caption: "The magic of us." },
-    { id: 20, caption: "Hand in hand, always." },
-    { id: 21, caption: "Eyes that speak love." },
-    { id: 22, caption: "A shared heartbeat." },
-    { id: 23, caption: "Together is a beautiful place." },
-    { id: 24, caption: "Our love, our story." },
-    { id: 25, caption: "Walking into forever." },
-    { id: 26, caption: "Moments frozen in time." },
-    { id: 27, caption: "A journey of love." },
-    { id: 28, caption: "You complete me." },
-    { id: 29, caption: "Love is in the air." },
-    { id: 30, caption: "Endless smiles." },
-    { id: 31, caption: "You & Me." },
-    { id: 32, caption: "Dancing under the stars." },
-    { id: 33, caption: "Our forever begins here." },
-    { id: 34, caption: "This is us." },
-    { id: 35, caption: "True love's gaze." },
-    { id: 36, caption: "Captured happiness." },
-    { id: 37, caption: "Just us." },
-    { id: 38, caption: "Our timeless moment." },
-    { id: 39, caption: "Written in the stars." },
-    { id: 40, caption: "In your arms, always." },
-    { id: 41, caption: "Every moment matters." },
-    { id: 42, caption: "The best day of our lives." },
-    { id: 43, caption: "Forever begins today." },
-    { id: 44, caption: "Side by side, heart to heart." },
-    { id: 45, caption: "Love captured perfectly." },
-    { id: 46, caption: "Together is better." },
-    { id: 47, caption: "Happiness in a frame." },
-    { id: 48, caption: "Every step with you." },
-    { id: 49, caption: "The light of our love." },
-    { id: 50, caption: "Promises made." },
-    { id: 51, caption: "Smiles that tell a story." },
-    { id: 52, caption: "Pure connection." },
-    { id: 53, caption: "Our moment of joy." },
-    { id: 54, caption: "Hearts in harmony." },
-    { id: 55, caption: "Simply meant to be." },
-    { id: 56, caption: "Bound by love." },
-    { id: 57, caption: "United in happiness." },
-    { id: 58, caption: "Every glance, a promise." },
-    { id: 59, caption: "Smiles that shine bright." },
-    { id: 60, caption: "Whispers of forever." },
-    { id: 61, caption: "Soulmate vibes." },
-    { id: 62, caption: "Our kind of love." },
-    { id: 63, caption: "Every heartbeat for you." },
-    { id: 64, caption: "Sweet embrace." },
-    { id: 65, caption: "Hearts aligned." },
-    { id: 66, caption: "Magic in the moment." },
-    { id: 67, caption: "Just love." },
-    { id: 68, caption: "Boundless bliss." },
-    { id: 69, caption: "Captured love." },
-    { id: 70, caption: "Infinite memories." },
-    { id: 71, caption: "Together always." },
-    { id: 72, caption: "Endless happiness." },
-    { id: 73, caption: "All that I need is you." },
-    { id: 74, caption: "You light up my world." },
-    { id: 75, caption: "Dreams fulfilled." },
-    { id: 76, caption: "Moments worth cherishing." },
-    { id: 77, caption: "Together, unstoppable." },
-    { id: 78, caption: "The power of love." },
-    { id: 79, caption: "Serenity in your smile." },
-    { id: 80, caption: "Our happy place." },
-    { id: 81, caption: "Faith, trust, and love." },
-    { id: 82, caption: "Love is our language." },
-    { id: 83, caption: "My forever person." },
-    { id: 84, caption: "Endlessly in love." },
-    { id: 85, caption: "Together, always." },
-    { id: 86, caption: "More than words." },
-    { id: 87, caption: "Sweet serenity." },
-    { id: 88, caption: "Our chapter of love." },
-    { id: 89, caption: "Every glance a spark." },
-    { id: 90, caption: "Only us." },
-    { id: 91, caption: "My constant, my love." },
-    { id: 92, caption: "Hold me forever." },
-    { id: 93, caption: "Ever after begins here." },
-    { id: 94, caption: "Graceful love." },
-    { id: 95, caption: "In every lifetime." },
-    { id: 96, caption: "Your smile, my joy." },
-    { id: 97, caption: "Forever yours." },
-    { id: 98, caption: "A vow of love." },
-    { id: 99, caption: "Hearts forever intertwined." },
-    { id: 100, caption: "A love that never lets go." },
-    { id: 101, caption: "A connection like no other." },
-    { id: 102, caption: "A bond forged in love." },
-    { id: 103, caption: "Together, always and forever." },
-    { id: 104, caption: "A love that grows stronger with time." },
-    { id: 105, caption: "A bond that never fades." },
-    { id: 106, caption: "Together through every storm." },
-    { id: 107, caption: "The beginning of forever." },
-    { id: 108, caption: "Love that stands the test of time." },
-    { id: 109, caption: "Forever united in heart." },
-    { id: 110, caption: "A perfect love story in the making." },
-    { id: 111, caption: "Together, always and forever." },
-  ], []); // Empty dependency array since this data never changes
+  const imageIds = useMemo(() => Array.from({ length: TOTAL }, (_, i) => i + 1), []);
 
-  // Function to dynamically import images - wrapped in useCallback
   const loadImages = useCallback(async (start, end) => {
     setIsLoading(true);
     try {
-      const newImages = await Promise.all(
-        imageData.slice(start, end).map(async (item) => {
-          const image = await import(`../../assets/GALLERY/SECTION_TWO/sectiontwo (${item.id}).jpg`);
-          return {
-            ...item,
-            image: image.default
-          };
+      const batch = await Promise.all(
+        imageIds.slice(start, end).map(async (id) => {
+          const mod = await import(`../../assets/GALLERY/SECTION_TWO/sectiontwo (${id}).jpg`);
+          return { id, src: mod.default };
         })
       );
-      setLoadedImages(prev => [...prev, ...newImages]);
-    } catch (error) {
-      console.error("Error loading images:", error);
+      setLoadedImages(prev => [...prev, ...batch]);
+      setTotalLoaded(end);
+    } catch (e) {
+      console.error(e);
     } finally {
       setIsLoading(false);
     }
-  }, [imageData]); // imageData is now stable due to useMemo
+  }, [imageIds]);
 
-  // Load initial set of images
-  useEffect(() => {
-    loadImages(0, visibleCount);
-  }, [loadImages, visibleCount]);
+  useEffect(() => { loadImages(0, BATCH); }, [loadImages]);
 
-  // Load more images when visibleCount increases
+  const allImages = useMemo(() => [...heroImages.map((src, i) => ({ id: `h${i}`, src })), ...loadedImages], [loadedImages]);
+  const lightboxImages = loadedImages.map(i => i.src);
+
+  const openLightbox = (idx) => setLightboxIndex(idx);
+  const closeLightbox = () => setLightboxIndex(null);
+  const prevImage = () => setLightboxIndex(i => (i - 1 + lightboxImages.length) % lightboxImages.length);
+  const nextImage = () => setLightboxIndex(i => (i + 1) % lightboxImages.length);
+
   useEffect(() => {
-    if (visibleCount > 20) {
-      loadImages(loadedImages.length, visibleCount);
+    const onKey = (e) => {
+      if (lightboxIndex === null) return;
+      if (e.key === 'ArrowLeft') prevImage();
+      if (e.key === 'ArrowRight') nextImage();
+      if (e.key === 'Escape') closeLightbox();
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [lightboxIndex]);
+
+  /* Chunk loaded images into groups of 7 for varied layouts */
+  const chunks = useMemo(() => {
+    const arr = [];
+    for (let i = 0; i < loadedImages.length; i += 7) {
+      arr.push(loadedImages.slice(i, i + 7));
     }
-  }, [visibleCount, loadImages, loadedImages.length]);
+    return arr;
+  }, [loadedImages]);
 
-  const loadMoreImages = () => {
-    setVisibleCount(prev => Math.min(prev + 20, imageData.length));
-  };
+  const layouts = ['a', 'b', 'c', 'd', 'e'];
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white to-[#F8FAF0]">
-      {/* Header Section */}
-      <div className="pt-20 pb-12 px-4">
-        <div className="max-w-4xl mx-auto text-center">
-          <h1 className="text-5xl md:text-6xl font-playfair text-[#328E6E] mb-6">
-            Wedding Gallery
-          </h1>
-          <p className="text-xl md:text-2xl text-gray-600 font-montserrat leading-relaxed">
-            Step into a world of enchanting moments and timeless celebrations. Our gallery showcases the magic of love stories we've had the privilege to capture and create.
-          </p>
+    <div className="gallery-root">
+      <GalleryStyles />
+
+      {/* ═══ MASTHEAD ═══ */}
+      <div className="gal-masthead">
+        <motion.div className="gal-eyebrow"
+          initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.8 }}>
+          <div className="gal-eyebrow-line" />
+          The Archive · Luvit Weds
+        </motion.div>
+
+        <div className="gal-title-row">
+          <motion.h1 className="gal-title"
+            initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1.1, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}>
+            Our<br /><em>Gallery</em>
+          </motion.h1>
+
+          <motion.div className="gal-title-meta"
+            initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.9, delay: 0.4 }}>
+            <p>A curated archive of frames where light, love, and fleeting moments converge into something eternal.</p>
+            <span className="gal-count">{TOTAL}+ Frames Captured</span>
+          </motion.div>
         </div>
       </div>
 
-      {/* Hero Section with Slider */}
-      <section className="h-[90vh] md:h-[100vh] relative overflow-hidden">
-  {/* Background Overlay */}
-  <div className="absolute inset-0 bg-black/20 z-0" />
-  
-  {/* Floating Petals Decoration */}
-  <div className="absolute inset-0 overflow-hidden z-0">
-    {[...Array(15)].map((_, i) => (
-      <motion.div
-        key={`petal-${i}`}
-        initial={{ opacity: 0, y: -20, x: Math.random() * 100 }}
-        animate={{
-          opacity: [0, 0.6, 0],
-          y: [0, window.innerHeight],
-          x: Math.random() * 100 - 50,
-          rotate: Math.random() * 360
-        }}
-        transition={{
-          duration: 10 + Math.random() * 10,
-          repeat: Infinity,
-          delay: Math.random() * 5,
-          ease: "linear"
-        }}
-        className="absolute text-white/30"
-        style={{
-          fontSize: `${10 + Math.random() * 20}px`,
-          left: `${Math.random() * 100}%`,
-          top: `-10%`
-        }}
-      >
-        ❦
-      </motion.div>
-    ))}
-  </div>
-
-  {/* Desktop Swiper */}
-  <div className="hidden md:block h-full w-full">
-    <Swiper
-      modules={[SwiperNavigation, SwiperPagination, SwiperAutoplay, SwiperEffectCreative]}
-      effect="creative"
-      creativeEffect={{
-        prev: {
-          shadow: true,
-          translate: [0, 0, -400],
-          opacity: 0
-        },
-        next: {
-          translate: ["100%", 0, 0],
-          opacity: 0
-        }
-      }}
-      centeredSlides={true}
-      slidesPerView={1.2}
-      loop={true}
-      speed={1200}
-      autoplay={{ delay: 3500, disableOnInteraction: false }}
-      pagination={{ 
-        clickable: true,
-        renderBullet: (index, className) => {
-          return `<span class="${className} bg-white !w-3 !h-3 !mx-1.5 !opacity-50"></span>`;
-        }
-      }}
-      navigation={{
-        nextEl: '.swiper-button-next',
-        prevEl: '.swiper-button-prev',
-      }}
-      className="h-full"
-    >
-      {galleryImagessectionone.slice(0, 7).map((image, index) => (
-        <SwiperSlide key={`desktop-${index}`}>
-          <motion.div 
-            className="h-full w-full relative overflow-hidden rounded-lg"
-            whileHover={{ scale: 1.02 }}
-            transition={{ duration: 0.5 }}
-          >
-            <img 
-              src={image}
-              alt={`Featured Wedding ${index + 1}`}
-              className="w-full h-full object-cover transform transition-transform duration-700 hover:scale-105"
-              loading="lazy"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
-            <div className="absolute bottom-8 left-8 text-white">
-              <motion.p 
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.3 }}
-                className="font-montserrat text-sm tracking-widest"
-              >
-                WEDDING STORY {index + 1}
-              </motion.p>
-              <motion.h3 
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.5 }}
-                className="font-playfair text-3xl mt-2"
-              >
-                {["Eternal Love", "Timeless Elegance", "Romantic Bliss", "Dream Wedding", "Golden Moment", "Fairytale Day"][index]}
-              </motion.h3>
-            </div>
-          </motion.div>
-        </SwiperSlide>
-      ))}
-    </Swiper>
-    
-    {/* Custom Navigation Arrows */}
-    <div className="swiper-button-next !text-white !right-12 after:!text-2xl" />
-    <div className="swiper-button-prev !text-white !left-12 after:!text-2xl" />
-  </div>
-
-  {/* Mobile Swiper */}
-  <div className="md:hidden h-full w-full">
-    <Swiper
-      modules={[SwiperPagination, SwiperAutoplay]}
-      slidesPerView={1}
-      loop={true}
-      speed={1000}
-      autoplay={{ delay: 3000, disableOnInteraction: false }}
-      pagination={{ 
-        clickable: true,
-        renderBullet: (index, className) => {
-          return `<span class="${className} bg-white !w-2 !h-2 !mx-1 !opacity-50"></span>`;
-        }
-      }}
-      className="h-full"
-    >
-      {galleryImagessectionone.slice(0, 7).map((image, index) => (
-        <SwiperSlide key={`mobile-${index}`}>
-          <div className="h-full w-full relative overflow-hidden">
-            <img 
-              src={image}
-              alt={`Featured Wedding ${index + 1}`}
-              className="w-full h-full object-cover"
-              loading="lazy"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-            <div className="absolute bottom-6 left-6 text-white">
-              <p className="font-montserrat text-xs tracking-widest">
-                WEDDING STORY {index + 1}
-              </p>
-              <h3 className="font-playfair text-xl mt-1">
-                {["Eternal Love", "Timeless", "Romantic", "Dream Day"][index]}
-              </h3>
-            </div>
-          </div>
-        </SwiperSlide>
-      ))}
-    </Swiper>
-  </div>
-  
-  {/* Main Title */}
-  <motion.div
-    initial={{ opacity: 0, y: 30 }}
-    animate={{ opacity: 1, y: 0 }}
-    transition={{ duration: 0.8 }}
-    className="absolute inset-0 flex flex-col items-center justify-center z-10 px-4 pointer-events-none"
-  >
-    <div className="text-center text-white max-w-4xl mx-auto">
-      <motion.div
-        initial={{ scale: 0.9 }}
-        animate={{ scale: 1 }}
-        transition={{ delay: 0.5, type: "spring" }}
-        className="mb-6 md:mb-10"
-      >
-        <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-playfair font-bold mb-4 text-shadow-lg">
-          Our <span className="text-gold-400">Masterpieces</span>
-        </h1>
-        <div className="w-24 h-1 bg-white/80 mx-auto" />
-      </motion.div>
-      
-      <motion.p
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.8 }}
-        className="text-sm sm:text-base md:text-lg lg:text-xl font-montserrat font-light tracking-wider leading-relaxed text-shadow"
-      >
-        Where every frame whispers a love story, every glance holds eternity, and every moment becomes art
-      </motion.p>
-      
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 1.2 }}
-        className="mt-8 md:mt-12"
-      >
-        <button className="pointer-events-auto px-8 py-3 bg-transparent border border-white/50 text-white font-montserrat text-sm tracking-widest hover:bg-white/10 transition-all duration-300 hover:border-white/80">
-          VIEW GALLERY
-        </button>
-      </motion.div>
-    </div>
-  </motion.div>
-</section>
-
-      {/* Gallery Grid */}
-      <section className="py-20 px-4">
-        <div className="max-w-[1400px] mx-auto">
-          <motion.div 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.8 }}
-            className="grid grid-cols-2 md:grid-cols-3 gap-6 lg:gap-8"
-          >
-            {loadedImages.slice(0, visibleCount).map((item, index) => (
-              <motion.div
-                key={item.id}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1 }}
-                className="group relative aspect-[4/5] cursor-pointer overflow-hidden rounded-2xl shadow-2xl"
-                onClick={() => setSelectedImage(item.image)}
-              >
-                <img 
-                  src={item.image} 
-                  alt={`Wedding Story ${item.id}`}
-                  className="w-full h-full object-cover transform group-hover:scale-110 transition duration-1000"
-                  loading="lazy"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500">
-                  <div className="absolute bottom-0 p-6 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
-                    <h3 className="text-white font-playfair text-2xl mb-2">
-                      {item.caption}
-                    </h3>
-                  </div>
-                </div>
-              </motion.div>
-            ))}
-          </motion.div>
-        </div>
-      </section>
-
-      {/* Image Modal */}
-      <AnimatePresence>
-        {selectedImage && (
-          <motion.div 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/95 z-50 flex items-center justify-center p-4 backdrop-blur-md"
-            onClick={() => setSelectedImage(null)}
-          >
-            <motion.div
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.9, opacity: 0 }}
-              className="relative max-w-6xl w-full aspect-[4/5] rounded-2xl overflow-hidden"
-              onClick={(e) => e.stopPropagation()}
+      {/* ═══ FILMSTRIP ═══ */}
+      <div className="filmstrip-wrap">
+        <span className="filmstrip-label">Selected Works — Scroll</span>
+        <div className="filmstrip-track">
+          {[...heroImages, ...heroImages].map((src, i) => (
+            <div
+              key={i}
+              className={`filmstrip-frame ${i % 3 === 1 ? 'landscape' : ''}`}
+              onClick={() => openLightbox(i % heroImages.length)}
             >
-              <img
-                src={selectedImage}
-                className="w-full h-full object-cover"
-                alt="Selected artwork"
-              />
-              <button 
-                className="absolute top-6 right-6 w-12 h-12 bg-white/10 backdrop-blur-sm rounded-full flex items-center justify-center text-white text-3xl hover:bg-white/20 transition-colors"
-                onClick={() => setSelectedImage(null)}
-              >
-                ×
-              </button>
-            </motion.div>
+              <img src={src} alt="" />
+              <span className="frame-number">{String(i % heroImages.length + 1).padStart(2, '0')}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* ═══ EDITORIAL GRID ═══ */}
+      {chunks.map((chunk, ci) => {
+        const layout = layouts[ci % layouts.length];
+        const offset = ci * 7;
+
+        return (
+          <React.Fragment key={ci}>
+            {/* Section divider every 2 chunks */}
+            {ci % 2 === 0 && (
+              <div className="gal-divider">
+                <span className="gal-div-num">{String(ci / 2 + 1).padStart(2, '0')}</span>
+                <div className="gal-div-content">
+                  <h2 className="gal-div-title">
+                    {['Wedded Moments', 'Light & Shadow', 'Unscripted Joy', 'Golden Hours'][Math.floor(ci / 2) % 4]}
+                  </h2>
+                  <div className="gal-div-line" />
+                </div>
+              </div>
+            )}
+
+            <div className="gal-grid-wrap">
+              {/* Layout A: 1 tall + 2 side */}
+              {layout === 'a' && chunk.length >= 3 && (
+                <div className="gal-layout-a">
+                  <ImgCell src={chunk[0].src} className="cell-main" onClick={() => openLightbox(offset)} />
+                  <ImgCell src={chunk[1].src} className="cell-side" onClick={() => openLightbox(offset + 1)} />
+                  <ImgCell src={chunk[2].src} className="cell-side" onClick={() => openLightbox(offset + 2)} />
+                </div>
+              )}
+
+              {/* Layout B: 3 squares */}
+              {layout === 'b' && chunk.length >= 3 && (
+                <div className="gal-layout-b">
+                  {chunk.slice(0, 3).map((img, i) => (
+                    <ImgCell key={img.id} src={img.src} className="cell" onClick={() => openLightbox(offset + i)} />
+                  ))}
+                </div>
+              )}
+
+              {/* Layout C: wide + portrait */}
+              {layout === 'c' && chunk.length >= 2 && (
+                <div className="gal-layout-c">
+                  <ImgCell src={chunk[0].src} className="cell-wide" onClick={() => openLightbox(offset)} />
+                  <ImgCell src={chunk[1].src} className="cell-port" onClick={() => openLightbox(offset + 1)} />
+                </div>
+              )}
+
+              {/* Layout D: 2 tall */}
+              {layout === 'd' && chunk.length >= 2 && (
+                <div className="gal-layout-d">
+                  <ImgCell src={chunk[0].src} className="cell" onClick={() => openLightbox(offset)} />
+                  <ImgCell src={chunk[1].src} className="cell" onClick={() => openLightbox(offset + 1)} />
+                </div>
+              )}
+
+              {/* Layout E: full bleed */}
+              {layout === 'e' && chunk.length >= 1 && (
+                <div className="gal-layout-e">
+                  <ImgCell src={chunk[0].src} className="cell-full" onClick={() => openLightbox(offset)} tag="Full Frame" />
+                </div>
+              )}
+
+              {/* Remaining images from chunk as 3-col grid */}
+              {chunk.length > 3 && (
+                <div className="gal-layout-b" style={{ marginTop: 10 }}>
+                  {chunk.slice(layout === 'a' ? 3 : layout === 'e' ? 1 : layout === 'c' ? 2 : layout === 'd' ? 2 : 3).map((img, i) => (
+                    <ImgCell key={img.id} src={img.src} className="cell"
+                      onClick={() => openLightbox(offset + (layout === 'a' ? 3 : layout === 'e' ? 1 : layout === 'c' ? 2 : layout === 'd' ? 2 : 3) + i)} />
+                  ))}
+                </div>
+              )}
+            </div>
+          </React.Fragment>
+        );
+      })}
+
+      {/* ═══ LOAD MORE ═══ */}
+      {totalLoaded < TOTAL && (
+        <div className="load-more-zone">
+          <div className="load-line" />
+          <button
+            className="load-btn"
+            onClick={() => loadImages(totalLoaded, Math.min(totalLoaded + BATCH, TOTAL))}
+            disabled={isLoading}
+          >
+            {isLoading ? 'Loading…' : 'Load More Frames'}
+          </button>
+          <div className="load-line" />
+        </div>
+      )}
+
+      {/* ═══ FOOTER ═══ */}
+      <footer className="gal-footer">
+        <span className="gal-footer-logo">Luvit Weds</span>
+        <span className="gal-footer-copy">© 2025 · All Stories Captured with Heart</span>
+      </footer>
+
+      {/* ═══ LIGHTBOX ═══ */}
+      <AnimatePresence>
+        {lightboxIndex !== null && lightboxImages[lightboxIndex] && (
+          <motion.div
+            className="lightbox-bg"
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            transition={{ duration: 0.35 }}
+            onClick={closeLightbox}
+          >
+            <div className="lightbox-close" onClick={closeLightbox}>
+              <span /><span />
+            </div>
+
+            <motion.img
+              key={lightboxIndex}
+              src={lightboxImages[lightboxIndex]}
+              className="lightbox-img"
+              initial={{ opacity: 0, scale: 0.96 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.96 }}
+              transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+              onClick={e => e.stopPropagation()}
+              alt="Lightbox"
+            />
+
+            <div className="lightbox-nav" onClick={e => e.stopPropagation()}>
+              <button className="lightbox-nav-btn" onClick={prevImage}>← Prev</button>
+              <span>{String(lightboxIndex + 1).padStart(2, '0')} / {String(lightboxImages.length).padStart(3, '0')}</span>
+              <button className="lightbox-nav-btn" onClick={nextImage}>Next →</button>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
-
-      {visibleCount < imageData.length && (
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="text-center py-20"
-        >
-          <button 
-            onClick={loadMoreImages}
-            disabled={isLoading}
-            className="px-16 py-6 bg-[#328E6E] text-white text-2xl rounded-full font-montserrat hover:bg-[#67AE6E] transition-all duration-500 shadow-xl hover:shadow-2xl transform hover:-translate-y-1 disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {isLoading ? 'Loading...' : 'Explore More Stories'}
-          </button>
-        </motion.div>
-      )}
     </div>
-  )
+  );
 }
 
-export default Gallery
+export default Gallery;
