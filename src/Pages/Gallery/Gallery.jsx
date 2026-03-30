@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react'
-import { motion, AnimatePresence, } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 
 // Hero Asset imports
 import sectionOne1 from '../../assets/GALLERY/SECTION_ONE/sectionone (1).jpg';
@@ -17,13 +17,13 @@ const GalleryStyles = () => (
     @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Unbounded:wght@200;300&family=Alex+Brush&display=swap');
 
     :root {
-      --cream:   #f8f4ee;
+      --cream:    #f8f4ee;
       --parchment: #efe8dc;
-      --blush:   #e4cfc0;
-      --rose:    #c4856b;
-      --mink:    #8c7b70;
-      --ink:     #231f1b;
-      --white:   #fdfaf6;
+      --blush:    #e4cfc0;
+      --rose:     #c4856b;
+      --mink:     #8c7b70;
+      --ink:      #231f1b;
+      --white:    #fdfaf6;
     }
 
     .gallery-root {
@@ -34,7 +34,6 @@ const GalleryStyles = () => (
       cursor: crosshair;
     }
 
-    /* ── Grain ── */
     .gallery-root::before {
       content: '';
       position: fixed; inset: 0; z-index: 9998;
@@ -43,7 +42,6 @@ const GalleryStyles = () => (
       background-size: 160px;
     }
 
-    /* ─── MASTHEAD ─── */
     .gal-masthead {
       padding: clamp(80px,12vw,160px) clamp(24px,6vw,88px) 0;
       max-width: 1440px; margin: 0 auto;
@@ -86,7 +84,6 @@ const GalleryStyles = () => (
       color: var(--rose); text-transform: uppercase;
     }
 
-    /* ─── FILMSTRIP HERO ─── */
     .filmstrip-wrap {
       overflow: hidden; width: 100%;
       padding: clamp(40px, 7vw, 80px) 0;
@@ -143,7 +140,6 @@ const GalleryStyles = () => (
       pointer-events: none;
     }
 
-    /* ─── SECTION DIVIDER ─── */
     .gal-divider {
       display: flex; align-items: center; gap: 20px;
       padding: clamp(48px, 7vw, 96px) clamp(24px, 6vw, 88px) clamp(32px, 5vw, 64px);
@@ -164,13 +160,11 @@ const GalleryStyles = () => (
     }
     .gal-div-line { height: 1px; background: var(--blush); margin-top: 16px; }
 
-    /* ─── EDITORIAL GRID ─── */
     .gal-grid-wrap {
       padding: 0 clamp(24px, 6vw, 88px) clamp(80px, 12vw, 140px);
       max-width: 1440px; margin: 0 auto;
     }
 
-    /* LAYOUT A — 1 large + 2 tall stack */
     .gal-layout-a {
       display: grid;
       grid-template-columns: 1.55fr 1fr;
@@ -182,7 +176,6 @@ const GalleryStyles = () => (
     }
     .gal-layout-a .cell-side { aspect-ratio: 4/3; }
 
-    /* LAYOUT B — 3 equal squares */
     .gal-layout-b {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -190,7 +183,6 @@ const GalleryStyles = () => (
     }
     .gal-layout-b .cell { aspect-ratio: 1; }
 
-    /* LAYOUT C — wide banner + portrait */
     .gal-layout-c {
       display: grid;
       grid-template-columns: 1fr 0.6fr;
@@ -199,7 +191,6 @@ const GalleryStyles = () => (
     .gal-layout-c .cell-wide { aspect-ratio: 16/10; }
     .gal-layout-c .cell-port { aspect-ratio: 3/4; }
 
-    /* LAYOUT D — 2 equal tall */
     .gal-layout-d {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -207,7 +198,6 @@ const GalleryStyles = () => (
     }
     .gal-layout-d .cell { aspect-ratio: 3/4; }
 
-    /* LAYOUT E — full bleed single */
     .gal-layout-e { margin-bottom: 10px; }
     .gal-layout-e .cell-full { aspect-ratio: 21/9; }
 
@@ -224,7 +214,6 @@ const GalleryStyles = () => (
       }
     }
 
-    /* ─── Image Cell ─── */
     .img-cell {
       position: relative; overflow: hidden;
       background: var(--parchment); cursor: pointer;
@@ -254,7 +243,6 @@ const GalleryStyles = () => (
     }
     .img-cell:hover .img-cell-tag { color: rgba(255,255,255,0.6); }
 
-    /* ─── LOAD MORE ─── */
     .load-more-zone {
       padding: clamp(40px, 6vw, 80px) clamp(24px, 6vw, 88px);
       display: flex; align-items: center; justify-content: center; gap: 32px;
@@ -276,7 +264,6 @@ const GalleryStyles = () => (
     .load-btn:hover::before { background: var(--ink); border-color: var(--ink); }
     .load-btn:disabled { opacity: 0.4; pointer-events: none; }
 
-    /* ─── LIGHTBOX ─── */
     .lightbox-bg {
       position: fixed; inset: 0; z-index: 9999;
       background: rgba(245,240,233,0.97);
@@ -316,7 +303,6 @@ const GalleryStyles = () => (
     }
     .lightbox-nav-btn:hover { background: var(--ink); color: var(--white); border-color: var(--ink); }
 
-    /* ─── FOOTER ─── */
     .gal-footer {
       border-top: 1px solid rgba(35,31,27,0.07);
       padding: 32px clamp(24px, 6vw, 88px);
@@ -385,9 +371,17 @@ function Gallery() {
   const lightboxImages = loadedImages.map(i => i.src);
 
   const openLightbox = (idx) => setLightboxIndex(idx);
-  const closeLightbox = () => setLightboxIndex(null);
-  const prevImage = () => setLightboxIndex(i => (i - 1 + lightboxImages.length) % lightboxImages.length);
-  const nextImage = () => setLightboxIndex(i => (i + 1) % lightboxImages.length);
+  
+  // FIXED: Wrapped in useCallback to satisfy dependency requirements
+  const closeLightbox = useCallback(() => setLightboxIndex(null), []);
+  
+  const prevImage = useCallback(() => {
+    setLightboxIndex(i => (i - 1 + lightboxImages.length) % lightboxImages.length);
+  }, [lightboxImages.length]);
+
+  const nextImage = useCallback(() => {
+    setLightboxIndex(i => (i + 1) % lightboxImages.length);
+  }, [lightboxImages.length]);
 
   useEffect(() => {
     const onKey = (e) => {
@@ -398,9 +392,8 @@ function Gallery() {
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [lightboxIndex]);
+  }, [lightboxIndex, prevImage, nextImage, closeLightbox]); // FIXED: Added missing dependencies
 
-  /* Chunk loaded images into groups of 7 for varied layouts */
   const chunks = useMemo(() => {
     const arr = [];
     for (let i = 0; i < loadedImages.length; i += 7) {
@@ -415,7 +408,6 @@ function Gallery() {
     <div className="gallery-root">
       <GalleryStyles />
 
-      {/* ═══ MASTHEAD ═══ */}
       <div className="gal-masthead">
         <motion.div className="gal-eyebrow"
           initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}
@@ -440,7 +432,6 @@ function Gallery() {
         </div>
       </div>
 
-      {/* ═══ FILMSTRIP ═══ */}
       <div className="filmstrip-wrap">
         <span className="filmstrip-label">Selected Works — Scroll</span>
         <div className="filmstrip-track">
@@ -457,14 +448,12 @@ function Gallery() {
         </div>
       </div>
 
-      {/* ═══ EDITORIAL GRID ═══ */}
       {chunks.map((chunk, ci) => {
         const layout = layouts[ci % layouts.length];
         const offset = ci * 7;
 
         return (
           <React.Fragment key={ci}>
-            {/* Section divider every 2 chunks */}
             {ci % 2 === 0 && (
               <div className="gal-divider">
                 <span className="gal-div-num">{String(ci / 2 + 1).padStart(2, '0')}</span>
@@ -478,7 +467,6 @@ function Gallery() {
             )}
 
             <div className="gal-grid-wrap">
-              {/* Layout A: 1 tall + 2 side */}
               {layout === 'a' && chunk.length >= 3 && (
                 <div className="gal-layout-a">
                   <ImgCell src={chunk[0].src} className="cell-main" onClick={() => openLightbox(offset)} />
@@ -487,7 +475,6 @@ function Gallery() {
                 </div>
               )}
 
-              {/* Layout B: 3 squares */}
               {layout === 'b' && chunk.length >= 3 && (
                 <div className="gal-layout-b">
                   {chunk.slice(0, 3).map((img, i) => (
@@ -496,7 +483,6 @@ function Gallery() {
                 </div>
               )}
 
-              {/* Layout C: wide + portrait */}
               {layout === 'c' && chunk.length >= 2 && (
                 <div className="gal-layout-c">
                   <ImgCell src={chunk[0].src} className="cell-wide" onClick={() => openLightbox(offset)} />
@@ -504,7 +490,6 @@ function Gallery() {
                 </div>
               )}
 
-              {/* Layout D: 2 tall */}
               {layout === 'd' && chunk.length >= 2 && (
                 <div className="gal-layout-d">
                   <ImgCell src={chunk[0].src} className="cell" onClick={() => openLightbox(offset)} />
@@ -512,14 +497,12 @@ function Gallery() {
                 </div>
               )}
 
-              {/* Layout E: full bleed */}
               {layout === 'e' && chunk.length >= 1 && (
                 <div className="gal-layout-e">
                   <ImgCell src={chunk[0].src} className="cell-full" onClick={() => openLightbox(offset)} tag="Full Frame" />
                 </div>
               )}
 
-              {/* Remaining images from chunk as 3-col grid */}
               {chunk.length > 3 && (
                 <div className="gal-layout-b" style={{ marginTop: 10 }}>
                   {chunk.slice(layout === 'a' ? 3 : layout === 'e' ? 1 : layout === 'c' ? 2 : layout === 'd' ? 2 : 3).map((img, i) => (
@@ -533,7 +516,6 @@ function Gallery() {
         );
       })}
 
-      {/* ═══ LOAD MORE ═══ */}
       {totalLoaded < TOTAL && (
         <div className="load-more-zone">
           <div className="load-line" />
@@ -548,13 +530,11 @@ function Gallery() {
         </div>
       )}
 
-      {/* ═══ FOOTER ═══ */}
       <footer className="gal-footer">
         <span className="gal-footer-logo">Luvit Weds</span>
         <span className="gal-footer-copy">© 2025 · All Stories Captured with Heart</span>
       </footer>
 
-      {/* ═══ LIGHTBOX ═══ */}
       <AnimatePresence>
         {lightboxIndex !== null && lightboxImages[lightboxIndex] && (
           <motion.div
