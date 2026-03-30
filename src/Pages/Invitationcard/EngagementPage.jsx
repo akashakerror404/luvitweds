@@ -47,7 +47,39 @@ const EngagementStyles = () => (
       pointer-events: none; opacity: 0.035;
       background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
     }
-
+ .footer-logo {
+      font-family: 'Great Vibes', cursive;
+      font-size: clamp(42px, 8vw, 64px);
+      color: var(--gold); margin-bottom: 8px;
+    }
+    .footer-sub {
+      font-size: 9px; letter-spacing: 0.5em; text-transform: uppercase;
+      color: rgba(250,246,239,0.4); margin-bottom: 36px; font-weight: 200;
+    }
+    .footer-contacts {
+      display: flex; flex-wrap: wrap; justify-content: center; gap: 20px 40px;
+      margin-bottom: 28px;
+    }
+    .footer-contact-link {
+      font-size: 12px; letter-spacing: 0.2em; color: rgba(250,246,239,0.65);
+      text-decoration: none; font-weight: 200;
+      transition: color 0.3s;
+    }
+    .footer-contact-link:hover { color: var(--gold); }
+    .footer-socials {
+      display: flex; justify-content: center; gap: 24px; margin-bottom: 32px;
+    }
+    .footer-social {
+      width: 38px; height: 38px; border: 1px solid rgba(201,169,110,0.3);
+      display: flex; align-items: center; justify-content: center;
+      text-decoration: none; color: var(--gold);
+      transition: background 0.3s, border-color 0.3s;
+    }
+    .footer-social:hover { background: rgba(201,169,110,0.12); border-color: var(--gold); }
+    .footer-copy {
+      font-size: 9px; letter-spacing: 0.3em; text-transform: uppercase;
+      color: rgba(250,246,239,0.25); font-weight: 200;
+    }
     .petals-canvas { position: fixed; inset: 0; pointer-events: none; z-index: 1; overflow: hidden; }
     .petal { position: absolute; top: -40px; width: 10px; height: 14px; border-radius: 80% 0 80% 0; opacity: 0; animation: petalFall linear infinite; }
     
@@ -317,11 +349,36 @@ function EngagementPage() {
       </div>
 
       {/* Footer */}
-      <footer className="wedding-footer">
-        <div className="footer-logo">Luvit Weds</div>
-        <div className="footer-sub">Creating Timeless Memories</div>
-        <p className="footer-copy">© {new Date().getFullYear()} Luvit Weds · All rights reserved</p>
-      </footer>
+   <footer className="wedding-footer">
+          <motion.div
+            initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }} transition={{ duration: 0.9 }}>
+            <div className="footer-logo">Luvit Weds</div>
+            <div className="footer-sub">Creating Timeless Memories</div>
+  
+            <div className="footer-contacts">
+              <a href="tel:7025784463" className="footer-contact-link">7025784463</a>
+              <span style={{ color: 'rgba(250,246,239,0.2)', fontSize: 12 }}>·</span>
+              <a href="tel:8301089693" className="footer-contact-link">8301089693</a>
+            </div>
+  
+            <div className="footer-socials">
+              <a href="/" className="footer-social" title="Website">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                  <circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 010 20M12 2a15.3 15.3 0 000 20"/>
+                </svg>
+              </a>
+              <a href="https://instagram.com/luvitweds" target="_blank" rel="noopener noreferrer" className="footer-social" title="Instagram">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073z"/>
+                  <path d="M12 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zm0 10.162a3.999 3.999 0 110-7.998 3.999 3.999 0 010 7.998zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/>
+                </svg>
+              </a>
+            </div>
+  
+            <p className="footer-copy">© {new Date().getFullYear()} Luvit Weds · All rights reserved</p>
+          </motion.div>
+        </footer>
 
       {/* Music Button */}
       <motion.button 
