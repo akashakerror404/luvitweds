@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useGetAllClientRequestsQuery } from '../../../store/api/ClientApi'
 import StatusBadge from '../../Ui/StatusBadge'
@@ -12,8 +12,8 @@ export default function ClinetRequestList() {
   // Fetch data from API
   const { data: apiResponse, isLoading, isError, error } = useGetAllClientRequestsQuery()
   
-  // Extract data array from API response with defensive check
-  const bookings = apiResponse?.data || []
+  // FIXED: Wrap 'bookings' in useMemo so it has a stable reference
+  const bookings = useMemo(() => apiResponse?.data || [], [apiResponse])
   
   // Get unique statuses from API data for filters
   const filters = useMemo(() => {
@@ -54,8 +54,8 @@ export default function ClinetRequestList() {
     }
   }
   
-  // Define columns configuration
-  const columns = [
+  // FIXED: Wrap columns in useMemo to prevent unnecessary table re-renders
+  const columns = useMemo(() => [
     { 
       key: 'client_name', 
       label: 'Client Name',
@@ -106,7 +106,7 @@ export default function ClinetRequestList() {
       label: 'Status',
       render: (value) => <StatusBadge status={value} />
     }
-  ]
+  ], [])
 
   const handleNewBooking = () => {
     console.log('New Request clicked')
