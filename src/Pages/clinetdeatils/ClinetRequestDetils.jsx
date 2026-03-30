@@ -1,422 +1,373 @@
 import React, { useState } from 'react';
-import { 
-  User, 
-  Phone, 
-  Mail, 
-  MapPin, 
-  Calendar, 
-  Clock, 
-  Building, 
-  Map, 
-  Plus,
-  X,
-  Send,
-  ChevronDown,
-  Heart,
-  Camera,
-  Gift,
-  Palette,
-  Home,
-  Sparkles,
-  Briefcase,
-  Baby,
-  Cake,
-  Diamond,
-  Sun,
-  Flower,
-  Trees,
-  Hash,
-  CalendarDays
-} from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Plus, X, Calendar, MapPin, Sparkles } from 'lucide-react';
+import { useAddClientRequestMutation } from '../../store/api/ClientApi';
 
 const EVENT_TYPES = [
-  { value: "Wedding", label: "Wedding", icon: Heart },
-  { value: "PreWeddingSaveTheDate", label: "Save the Date", icon: CalendarDays },
-  { value: "Haldi", label: "Haldi", icon: Sun },
-  { value: "BrideShower", label: "Bride Shower", icon: Gift },
-  { value: "Mehendi", label: "Mehendi", icon: Palette },
-  { value: "Reception", label: "Reception", icon: Sparkles },
-  { value: "OutdoorShoot", label: "Outdoor Shoot", icon: Trees },
-  { value: "StudioShoot", label: "Studio Shoot", icon: Camera },
-  { value: "Engagement", label: "Engagement", icon: Diamond },
-  { value: "Birthday", label: "Birthday", icon: Cake },
-  { value: "Maternity", label: "Maternity", icon: Baby },
-  { value: "Other", label: "Other", icon: Hash },
+  { value: "Wedding", label: "Wedding Ceremony" },
+  { value: "Engagement", label: "Engagement" },
+  { value: "PreWedding", label: "Pre-Wedding Shoot" },
+  { value: "SaveTheDate", label: "Save The Date" },
+  { value: "Haldi", label: "Haldi Ceremony" },
+  { value: "Mehendi", label: "Mehendi Night" },
+  { value: "Sangeet", label: "Sangeet Night" },
+  { value: "Reception", label: "Grand Reception" },
+  { value: "PostWedding", label: "Post-Wedding Shoot" },
+  { value: "Maternity", label: "Maternity Narrative" },
+  { value: "Newborn", label: "Newborn Series" },
+  { value: "ModelShoot", label: "Editorial Portrait" },
+  { value: "Corporate", label: "Corporate Event" },
+  { value: "Other", label: "Other Celebration" },
 ];
 
 function ClientRequestDetails() {
+  const [addClientRequest, { isLoading: isApiLoading }] = useAddClientRequestMutation();
+  
   const [formData, setFormData] = useState({
     client_name: '',
     mobile_number: '',
-    alternate_number: '',
     email: '',
     city: '',
-    status: 'Requested',
-    events: [{ event_type: '', event_date: '', event_time: '', venue_name: '', venue_address: '' }]
+    events: [{ event_type: '', event_date: '', venue_name: '' }]
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [message, setMessage] = useState({ type: '', text: '' });
+  const [submitted, setSubmitted] = useState(false);
+  const [error, setError] = useState(null);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value
-    });
+    setFormData({ ...formData, [name]: value });
+    // Clear error when user starts typing
+    if (error) setError(null);
   };
 
   const handleEventChange = (index, e) => {
     const { name, value } = e.target;
     const updatedEvents = [...formData.events];
     updatedEvents[index][name] = value;
-    setFormData({
-      ...formData,
-      events: updatedEvents
-    });
+    setFormData({ ...formData, events: updatedEvents });
+    if (error) setError(null);
   };
 
   const addEvent = () => {
     setFormData({
       ...formData,
-      events: [
-        ...formData.events,
-        { event_type: '', event_date: '', event_time: '', venue_name: '', venue_address: '' }
-      ]
+      events: [...formData.events, { event_type: '', event_date: '', venue_name: '' }]
     });
   };
 
   const removeEvent = (index) => {
     if (formData.events.length > 1) {
-      const updatedEvents = formData.events.filter((_, i) => i !== index);
       setFormData({
         ...formData,
-        events: updatedEvents
+        events: formData.events.filter((_, i) => i !== index)
       });
     }
+  };
+
+  const validateForm = () => {
+    // Check if all events have required fields
+    for (let i = 0; i < formData.events.length; i++) {
+      const event = formData.events[i];
+      if (!event.event_type) {
+        setError(`Please select event type for event ${i + 1}`);
+        return false;
+      }
+      if (!event.event_date) {
+        setError(`Please select event date for event ${i + 1}`);
+        return false;
+      }
+    }
+    return true;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    // Validate form
+    if (!validateForm()) {
+      return;
+    }
+
     setIsSubmitting(true);
-    setMessage({ type: '', text: '' });
-
+    setError(null);
+    
     try {
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
-      setMessage({ 
-        type: 'success', 
-        text: 'Your request has been sent! We\'ll contact you soon.' 
-      });
-      
-      setFormData({
-        client_name: '',
-        mobile_number: '',
-        alternate_number: '',
-        email: '',
-        city: '',
-        status: 'Requested',
-        events: [{ event_type: '', event_date: '', event_time: '', venue_name: '', venue_address: '' }]
-      });
+      // Prepare data for API
+      const requestData = {
+        client_name: formData.client_name,
+        mobile_number: formData.mobile_number,
+        email: formData.email,
+        city: formData.city,
+        events: formData.events.map(event => ({
+          event_type: event.event_type,
+          event_date: event.event_date,
+          venue_name: event.venue_name || ""
+        })),
+        source: "Website Inquiry",
+        notes: ""
+      };
 
-    } catch (error) {
-      setMessage({ 
-        type: 'error', 
-        text: 'Something went wrong. Please try again.' 
-      });
-    } finally {
+      // Call API
+      const response = await addClientRequest(requestData).unwrap();
+      
+      console.log('API Response:', response);
+      
+      // Show success message
+      setIsSubmitting(false);
+      setSubmitted(true);
+      
+    } catch (err) {
+      console.error('API Error:', err);
+      
+      // Handle validation errors from backend
+      if (err.data?.errors) {
+        const errorMessages = Object.values(err.data.errors).flat();
+        setError(errorMessages.join(', '));
+      } else {
+        setError(err.data?.message || 'Failed to submit request. Please try again.');
+      }
+      
       setIsSubmitting(false);
     }
   };
 
-  const getEventIcon = (eventType) => {
-    const event = EVENT_TYPES.find(t => t.value === eventType);
-    const IconComponent = event ? event.icon : Briefcase;
-    return <IconComponent className="w-4 h-4" />;
-  };
+  if (submitted) {
+    return (
+      <div className="min-h-screen bg-[#f0e9e0] flex items-center justify-center p-6">
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center">
+          <Sparkles className="w-12 h-12 text-[#8ba88e] mx-auto mb-8 animate-pulse" />
+          <h2 className="text-5xl md:text-7xl font-playfair italic mb-6 text-[#2d2d2d]">Thank You</h2>
+          <p className="font-montserrat text-[10px] tracking-[0.5em] uppercase text-gray-500">
+            Your narrative has been shared. Our team will reach out shortly.
+          </p>
+          <button 
+            onClick={() => {
+              setSubmitted(false);
+              setFormData({
+                client_name: '',
+                mobile_number: '',
+                email: '',
+                city: '',
+                events: [{ event_type: '', event_date: '', venue_name: '' }]
+              });
+            }} 
+            className="mt-12 text-[10px] tracking-[0.3em] uppercase border-b border-black pb-1 hover:text-[#8ba88e] transition-colors"
+          >
+            Back to Form
+          </button>
+        </motion.div>
+      </div>
+    );
+  }
+
+  const isLoading = isSubmitting || isApiLoading;
 
   return (
-    <div className="min-h-screen bg-gray-50 py-20 px-4 ">
-      <div className="max-w-2xl mx-auto">
+    <div className="min-h-screen bg-[#f0e9e0] text-[#2d2d2d] pt-32 pb-24 selection:bg-[#8ba88e] selection:text-white">
+      <div className="max-w-5xl mx-auto px-6 md:px-12 lg:px-20">
         
-        {/* Header */}
-        <div className="text-center mb-10">
-          <div className="flex justify-center items-center gap-3 mb-4">
-            <div className="w-2 h-2 rounded-full bg-[#328E6E]"></div>
-            <div className="w-1 h-1 rounded-full bg-[#328E6E]/40"></div>
-            <div className="w-2 h-2 rounded-full bg-[#328E6E]"></div>
-          </div>
-          <h1 className="text-2xl font-light text-gray-800 mb-2">
-            New Client Request
-          </h1>
-          <p className="text-gray-500 text-sm">
-            Share details about your celebration
-          </p>
-        </div>
+        {/* --- EDITORIAL HEADER --- */}
+        <header className="mb-24">
+          <motion.span 
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            className="text-[10px] tracking-[0.5em] uppercase text-[#8ba88e] font-montserrat font-bold block mb-4"
+          >
+            Inquiry Collective
+          </motion.span>
+          <motion.h1 
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="text-6xl md:text-9xl font-playfair leading-[0.85] italic lowercase"
+          >
+            build your <br />
+            <span className="not-italic ml-12 md:ml-24">itinerary</span>
+          </motion.h1>
+          <div className="h-[1px] bg-black/5 w-full mt-16" />
+        </header>
 
-        {/* Message Alert */}
-        {message.text && (
-          <div className={`mb-6 p-3 rounded-lg text-center ${
-            message.type === 'success' 
-              ? 'bg-[#328E6E]/10 text-[#328E6E] border border-[#328E6E]/20' 
-              : 'bg-red-50 text-red-700 border border-red-200'
-          }`}>
-            {message.text}
-          </div>
+        {/* Error Message */}
+        {error && (
+          <motion.div 
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mb-8 p-4 bg-red-50 border border-red-200 rounded-lg"
+          >
+            <p className="text-red-600 text-sm text-center">{error}</p>
+          </motion.div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-8">
+        <form onSubmit={handleSubmit} className="space-y-32">
           
-          {/* Client Information */}
-          <div className="space-y-6">
-            <div className="flex items-center gap-3 mb-1">
-              <User className="w-4 h-4 text-[#328E6E]" />
-              <h2 className="text-base font-normal text-gray-800">Client Details</h2>
+          {/* SECTION 1: PERSONAL DETAILS */}
+          <section className="grid grid-cols-1 lg:grid-cols-12 gap-12">
+            <div className="lg:col-span-4">
+               <span className="text-[10px] font-montserrat opacity-30 tracking-tighter block mb-2">01</span>
+               <h2 className="text-3xl font-playfair italic text-gray-400">Client Info</h2>
             </div>
             
-            <div className="space-y-4">
-              {/* Name */}
-              <div className="relative">
+            <div className="lg:col-span-8 grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-12">
+              <div className="space-y-1 group">
+                <label className="text-[9px] tracking-[0.3em] uppercase text-gray-400 font-bold group-focus-within:text-[#8ba88e] transition-colors">Full Name</label>
                 <input
                   type="text"
                   name="client_name"
                   value={formData.client_name}
                   onChange={handleInputChange}
                   required
-                  placeholder="Full name"
-                  className="w-full bg-transparent border-b border-gray-200 py-2 text-gray-800 placeholder-gray-400 focus:outline-none focus:border-[#328E6E] transition-colors text-sm"
+                  placeholder="The Couple / Client Name"
+                  className="w-full bg-transparent border-b border-black/10 py-3 focus:outline-none focus:border-[#8ba88e] transition-colors font-playfair text-xl placeholder:text-gray-300"
                 />
               </div>
-
-              {/* Contact Grid */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {/* Mobile */}
-                <div className="relative">
-                  <input
-                    type="tel"
-                    name="mobile_number"
-                    value={formData.mobile_number}
-                    onChange={handleInputChange}
-                    required
-                    placeholder="Mobile number"
-                    className="w-full bg-transparent border-b border-gray-200 py-2 text-gray-800 placeholder-gray-400 focus:outline-none focus:border-[#328E6E] transition-colors text-sm"
-                  />
-                </div>
-
-                {/* Alternate Mobile */}
-                <div className="relative">
-                  <input
-                    type="tel"
-                    name="alternate_number"
-                    value={formData.alternate_number}
-                    onChange={handleInputChange}
-                    placeholder="Alternate number (optional)"
-                    className="w-full bg-transparent border-b border-gray-200 py-2 text-gray-800 placeholder-gray-400 focus:outline-none focus:border-[#328E6E] transition-colors text-sm"
-                  />
-                </div>
+              <div className="space-y-1">
+                <label className="text-[9px] tracking-[0.3em] uppercase text-gray-400 font-bold">Contact Number</label>
+                <input
+                  type="tel"
+                  name="mobile_number"
+                  value={formData.mobile_number}
+                  onChange={handleInputChange}
+                  required
+                  className="w-full bg-transparent border-b border-black/10 py-3 focus:outline-none focus:border-[#8ba88e] transition-colors font-playfair text-xl"
+                />
               </div>
-
-              {/* Email & City Grid */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {/* Email */}
-                <div className="relative">
-                  <input
-                    type="email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleInputChange}
-                    required
-                    placeholder="Email address"
-                    className="w-full bg-transparent border-b border-gray-200 py-2 text-gray-800 placeholder-gray-400 focus:outline-none focus:border-[#328E6E] transition-colors text-sm"
-                  />
-                </div>
-
-                {/* City */}
-                <div className="relative">
-                  <input
-                    type="text"
-                    name="city"
-                    value={formData.city}
-                    onChange={handleInputChange}
-                    required
-                    placeholder="City"
-                    className="w-full bg-transparent border-b border-gray-200 py-2 text-gray-800 placeholder-gray-400 focus:outline-none focus:border-[#328E6E] transition-colors text-sm"
-                  />
-                </div>
+              <div className="space-y-1">
+                <label className="text-[9px] tracking-[0.3em] uppercase text-gray-400 font-bold">Email Address</label>
+                <input
+                  type="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleInputChange}
+                  required
+                  className="w-full bg-transparent border-b border-black/10 py-3 focus:outline-none focus:border-[#8ba88e] transition-colors font-playfair text-xl"
+                />
+              </div>
+              <div className="space-y-1">
+                <label className="text-[9px] tracking-[0.3em] uppercase text-gray-400 font-bold">Base Location</label>
+                <input
+                  type="text"
+                  name="city"
+                  value={formData.city}
+                  onChange={handleInputChange}
+                  required
+                  placeholder="e.g. Calicut"
+                  className="w-full bg-transparent border-b border-black/10 py-3 focus:outline-none focus:border-[#8ba88e] transition-colors font-playfair text-xl placeholder:text-gray-300"
+                />
               </div>
             </div>
-          </div>
+          </section>
 
-          {/* Events Section */}
-          <div className="space-y-6">
-            <div className="flex items-center gap-3 mb-1">
-              <Calendar className="w-4 h-4 text-[#328E6E]" />
-              <h2 className="text-base font-normal text-gray-800">Event Details</h2>
+          {/* SECTION 2: EVENT COLLECTIVE */}
+          <section className="grid grid-cols-1 lg:grid-cols-12 gap-12">
+            <div className="lg:col-span-4">
+               <span className="text-[10px] font-montserrat opacity-30 tracking-tighter block mb-2">02</span>
+               <h2 className="text-3xl font-playfair italic text-gray-400">The Events</h2>
+               <p className="text-[11px] text-gray-400 mt-4 leading-relaxed uppercase tracking-widest font-montserrat italic">
+                 Select all ceremonies you wish to document.
+               </p>
             </div>
 
-            {formData.events.map((event, index) => (
-              <div key={index} className="space-y-4 bg-white p-4 rounded-lg border border-gray-100">
-                {/* Event Header */}
-                <div className="flex items-center justify-between pb-2 border-b border-gray-50">
-                  <div className="flex items-center gap-3">
-                    <div className="w-7 h-7 rounded-md bg-[#328E6E]/10 flex items-center justify-center">
-                      {getEventIcon(event.event_type)}
-                    </div>
-                    <span className="text-gray-600 text-sm">
-                      Event {index + 1}
-                    </span>
-                  </div>
-                  
+            <div className="lg:col-span-8 space-y-10">
+              {formData.events.map((event, index) => (
+                <motion.div 
+                  key={index} 
+                  initial={{ opacity: 0, y: 10 }} 
+                  animate={{ opacity: 1, y: 0 }}
+                  className="relative p-10 border border-black/5 bg-white shadow-sm rounded-sm"
+                >
                   {formData.events.length > 1 && (
                     <button
                       type="button"
                       onClick={() => removeEvent(index)}
-                      className="p-1 hover:bg-gray-50 rounded transition"
-                      title="Remove event"
+                      className="absolute top-6 right-6 text-gray-300 hover:text-red-400 transition-colors"
                     >
-                      <X className="w-3.5 h-3.5 text-gray-400" />
+                      <X className="w-4 h-4" />
                     </button>
                   )}
-                </div>
-
-                {/* Event Form */}
-                <div className="space-y-4">
-                  {/* Event Type */}
-                  <div className="relative">
-                    <div className="relative">
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+                    <div className="space-y-1">
+                      <label className="text-[9px] tracking-[0.3em] uppercase text-gray-400 font-bold">Nature of Event</label>
                       <select
                         name="event_type"
                         value={event.event_type}
                         onChange={(e) => handleEventChange(index, e)}
                         required
-                        className="w-full appearance-none bg-transparent border-b border-gray-200 py-2 text-gray-800 focus:outline-none focus:border-[#328E6E] transition-colors cursor-pointer pr-8 text-sm"
+                        className="w-full bg-transparent border-b border-black/10 py-3 focus:outline-none font-playfair text-lg cursor-pointer"
                       >
-                        <option value="" className="text-gray-400 text-sm">Select event type</option>
-                        {EVENT_TYPES.map((type) => {
-                          const Icon = type.icon;
-                          return (
-                            <option key={type.value} value={type.value} className="text-gray-800 text-sm">
-                              {type.label}
-                            </option>
-                          );
-                        })}
+                        <option value="">Select Event Type</option>
+                        {EVENT_TYPES.map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
                       </select>
-                      <div className="absolute right-1 top-2.5 pointer-events-none">
-                        <ChevronDown className="w-3.5 h-3.5 text-gray-400" />
-                      </div>
                     </div>
-                  </div>
-
-                  {/* Date & Time Grid */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {/* Date */}
-                    <div className="relative">
+                    <div className="space-y-1">
+                      <label className="text-[9px] tracking-[0.3em] uppercase text-gray-400 font-bold">Date</label>
                       <input
                         type="date"
                         name="event_date"
                         value={event.event_date}
                         onChange={(e) => handleEventChange(index, e)}
                         required
-                        min={new Date().toISOString().split('T')[0]}
-                        className="w-full bg-transparent border-b border-gray-200 py-2 text-gray-800 focus:outline-none focus:border-[#328E6E] transition-colors text-sm"
+                        className="w-full bg-transparent border-b border-black/10 py-3 focus:outline-none font-playfair text-lg"
                       />
                     </div>
-
-                    {/* Time */}
-                    <div className="relative">
-                      <input
-                        type="time"
-                        name="event_time"
-                        value={event.event_time}
-                        onChange={(e) => handleEventChange(index, e)}
-                        required
-                        className="w-full bg-transparent border-b border-gray-200 py-2 text-gray-800 focus:outline-none focus:border-[#328E6E] transition-colors text-sm"
-                      />
-                    </div>
-                  </div>
-
-                  {/* Venue Details */}
-                  <div className="space-y-4">
-                    {/* Venue Name */}
-                    <div className="relative">
-                      <input
-                        type="text"
-                        name="venue_name"
-                        value={event.venue_name}
-                        onChange={(e) => handleEventChange(index, e)}
-                        required
-                        placeholder="Venue name"
-                        className="w-full bg-transparent border-b border-gray-200 py-2 text-gray-800 placeholder-gray-400 focus:outline-none focus:border-[#328E6E] transition-colors text-sm"
-                      />
-                    </div>
-
-                    {/* Venue Address */}
-                    <div className="relative">
-                      <input
-                        type="text"
-                        name="venue_address"
-                        value={event.venue_address}
-                        onChange={(e) => handleEventChange(index, e)}
-                        required
-                        placeholder="Venue address"
-                        className="w-full bg-transparent border-b border-gray-200 py-2 text-gray-800 placeholder-gray-400 focus:outline-none focus:border-[#328E6E] transition-colors text-sm"
-                      />
+                    <div className="md:col-span-2 space-y-1">
+                      <label className="text-[9px] tracking-[0.3em] uppercase text-gray-400 font-bold">Venue / Destination</label>
+                      <div className="flex items-center gap-3 border-b border-black/10 focus-within:border-[#8ba88e] transition-colors">
+                        <MapPin className="w-4 h-4 text-gray-300" />
+                        <input
+                          type="text"
+                          name="venue_name"
+                          value={event.venue_name}
+                          onChange={(e) => handleEventChange(index, e)}
+                          placeholder="e.g. Le Méridien, Kochi"
+                          className="w-full bg-transparent py-3 focus:outline-none font-playfair text-lg placeholder:text-gray-200"
+                        />
+                      </div>
                     </div>
                   </div>
-                </div>
-              </div>
-            ))}
+                </motion.div>
+              ))}
 
-            {/* Add Event Button */}
-            <button
-              type="button"
-              onClick={addEvent}
-              className="w-full py-2.5 border border-dashed border-gray-300 rounded-lg text-gray-600 hover:border-[#328E6E] hover:text-[#328E6E] transition-colors duration-200 group mt-2"
-            >
-              <div className="flex items-center justify-center gap-2">
-                <Plus className="w-3.5 h-3.5" />
-                <span className="text-sm font-normal">Add another event</span>
-              </div>
-            </button>
-          </div>
+              <button
+                type="button"
+                onClick={addEvent}
+                className="flex items-center gap-4 text-[10px] tracking-[0.4em] uppercase text-[#8ba88e] hover:text-[#2d2d2d] transition-all group font-bold"
+              >
+                <Plus className="w-5 h-5 group-hover:rotate-90 transition-transform p-1 border border-[#8ba88e] rounded-full" />
+                Add Event
+              </button>
+            </div>
+          </section>
 
-          {/* Submit Section */}
-          <div className="pt-2">
+          {/* FINAL SUBMIT ACTION */}
+          <div className="pt-20 flex flex-col items-center">
             <button
               type="submit"
-              disabled={isSubmitting}
-              className="w-full py-3 bg-[#328E6E] text-white rounded-lg hover:bg-[#2A7A5E] disabled:opacity-70 disabled:cursor-not-allowed transition-colors duration-200"
+              disabled={isLoading}
+              className="group relative w-full md:w-auto px-24 py-7 overflow-hidden border border-black disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {isSubmitting ? (
-                <div className="flex items-center justify-center gap-2">
-                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                  <span className="text-sm font-normal">Submitting...</span>
-                </div>
-              ) : (
-                <div className="flex items-center justify-center gap-2">
-                  <Send className="w-3.5 h-3.5" />
-                  <span className="text-sm font-normal">Submit request</span>
-                </div>
-              )}
+              <span className={`relative z-10 text-[10px] tracking-[0.8em] uppercase transition-colors duration-500 ${isLoading ? 'text-white' : 'group-hover:text-white'}`}>
+                {isLoading ? 'Documenting...' : 'Submit Inquiry'}
+              </span>
+              <motion.div 
+                initial={false}
+                animate={isLoading ? { y: 0 } : { y: "100%" }}
+                className="absolute inset-0 bg-[#2d2d2d]"
+                transition={{ duration: 0.5 }}
+              />
+              <div className="absolute inset-0 bg-[#2d2d2d] translate-y-full group-hover:translate-y-0 transition-transform duration-500" />
             </button>
-            
-            <p className="text-center text-gray-400 text-xs mt-2">
-              We'll respond within 24 hours
+            <p className="mt-8 text-[9px] tracking-[0.4em] text-gray-300 uppercase font-montserrat">
+              Kerala • Dubai • Available Worldwide
             </p>
           </div>
         </form>
 
-        {/* Footer */}
-        <div className="mt-10 pt-6 border-t border-gray-100 text-center">
-          <div className="flex justify-center gap-1 mb-2">
-            {[1, 2, 3].map((i) => (
-              <div key={i} className="w-1 h-1 rounded-full bg-[#328E6E]/20"></div>
-            ))}
-          </div>
-          <p className="text-gray-400 text-xs">
-           Luvit Weds • Since 2018
-          </p>
-        </div>
+        <footer className="mt-48 pt-10 border-t border-black/[0.03] text-center">
+           <h3 className="font-playfair italic text-xl opacity-20 mb-2">Luvit Weds</h3>
+           <p className="text-[8px] tracking-[0.2em] uppercase text-gray-300">© 2026 Crafted by Miraq Technology</p>
+        </footer>
       </div>
     </div>
   );
