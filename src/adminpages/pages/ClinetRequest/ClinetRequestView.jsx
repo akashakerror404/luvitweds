@@ -1,7 +1,7 @@
 import { useNavigate, useParams } from 'react-router-dom';
 import { useGetClientRequestByIdQuery } from '../../../store/api/ClientApi';
 import StatusBadge from '../../Ui/StatusBadge';
-import { ArrowLeft, Edit3, User,, MapPin, Globe, Clock, FileText } from 'lucide-react';
+import { ArrowLeft, Edit3, User, MapPin, Globe, Clock, FileText } from 'lucide-react';
 
 export default function ClientRequestView() {
   const { id } = useParams();

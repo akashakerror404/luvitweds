@@ -15,55 +15,9 @@ import AdminLayout from './adminpages/layout/AdminLayout';
 import Dashboard from './adminpages/pages/Dashboard';
 import Bookings from './adminpages/pages/Bookings';
 import ClinetRequestList from './adminpages/pages/ClinetRequest/ClinetRequestList';
-// import ClientRequestView from './adminpages/pages/ClinetRequest/ClinetRequestView';
+import ClientRequestView from './adminpages/pages/ClinetRequest/ClinetRequestView';
 import ClientRequestEdit from './adminpages/pages/ClinetRequest/ClinetRequestEdit';
-
-// Maintenance Mode Component
-const MaintenanceMode = () => {
-  return (
-    <div className="maintenance-container">
-      <div className="maintenance-content">
-        <div className="maintenance-icon">🎨</div>
-        <h1 className="maintenance-title">Something Beautiful is Coming!</h1>
-        <div className="maintenance-divider"></div>
-        
-        <p className="maintenance-message">
-          We're giving our website a complete makeover to serve you better!
-        </p>
-        
-        <div className="founder-message">
-          <div className="founder-quote">"</div>
-          <p className="founder-text">
-            Dear valued customers, we're working on something extraordinary to make your 
-            wedding planning experience even more magical. Thank you for your patience 
-            and continued trust in us.
-          </p>
-          <div className="founder-signature">
-            <strong>Akash</strong>
-            <span>Founder & Creative Director</span>
-          </div>
-        </div>
-
-
-
-        <div className="launch-info">
-          <div className="launch-badge">
-            <span className="blink-dot"></span>
-            Launching Soon
-          </div>
-          <p className="contact-message">
-            Have questions? I'm just a message away!
-          </p>
-          <a href="mailto:akash@luvit.com" className="maintenance-email">
-            📧 akash@luvit.com
-          </a>
-        </div>
-
-      
-      </div>
-    </div>
-  );
-};
+import EngagementPage from './Pages/Invitationcard/EngagementPage';
 
 function App() {
   const location = useLocation();
@@ -71,22 +25,11 @@ function App() {
   // Check if current route is admin or wedding page
   const isAdminRoute = location.pathname.startsWith('/admin');
   const isWeddingPage = location.pathname.startsWith('/luvit-wedding');
-  
-  // MAINTENANCE MODE FLAG - Set to false to disable maintenance mode
-  const isMaintenanceMode = false;
+    const isEngePage = location.pathname.startsWith('/luvit-engagement');
 
-  // If maintenance mode is enabled and not on wedding page, show maintenance message
-  if (isMaintenanceMode && !isWeddingPage) {
-    return (
-      <div className="App">
-        <MaintenanceMode />
-        <Analytics />
-      </div>
-    );
-  }
 
   // Hide Navbar and Chatboat for admin routes AND wedding routes
-  const shouldHideNavbar = isAdminRoute || isWeddingPage;
+  const shouldHideNavbar = isAdminRoute || isWeddingPage || isEngePage;
 
   return (
     <div className="App">
@@ -104,14 +47,20 @@ function App() {
 
         {/* Wedding page without Navbar */}
         <Route path="/luvit-wedding/:slug" element={<WeddingPage />} />
+<Route path="/luvit-engagement/:slug" element={<EngagementPage/>} />
 
         {/* Admin routes - Navbar and Chatboat already hidden */}
         <Route path="/admin" element={<AdminLayout />}>
           <Route index element={<Dashboard />} />
           <Route path="bookings" element={<Bookings />} />
           <Route path="clinetrequestlist" element={<ClinetRequestList />} />
-          {/* <Route path="client-requests/view/:id" element={<ClientRequestView />} /> */}
+          <Route path="client-requests/view/:id" element={<ClientRequestView />} />
           <Route path="client-requests/edit/:id" element={<ClientRequestEdit />} />
+
+
+
+
+          {/* Add other admin routes here */}
         </Route>
       </Routes>
 

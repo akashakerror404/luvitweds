@@ -3,6 +3,8 @@ import sangeeth from "./sangeeth-amrutha";
 import arjun from "./arjun-meera";
 import jishnuVandana from "./jishnuVandana";
 import rahularchana from "./rahul-archana";
+import vishalAnukrishna from "./vishalAnukrishna";
+
 
 
 export const allWeddings = {
@@ -11,6 +13,8 @@ export const allWeddings = {
   "arjun-meera": arjun,
   "jishnu-vandana": jishnuVandana,
     "rahul-archana": rahularchana,
+    "vishalAnukrishna": vishalAnukrishna,
+
 
 };
 
