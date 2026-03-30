@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Plus, X, Calendar, MapPin, Sparkles } from 'lucide-react';
+import { motion, } from 'framer-motion';
+import { Plus, X, MapPin, Sparkles } from 'lucide-react';
 import { useAddClientRequestMutation } from '../../store/api/ClientApi';
 
 const EVENT_TYPES = [

@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react'
-import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion'
+import React, { useState, useEffect, useCallback, useMemo } from 'react'
+import { motion, AnimatePresence, } from 'framer-motion'
 
 // Hero Asset imports
 import sectionOne1 from '../../assets/GALLERY/SECTION_ONE/sectionone (1).jpg';
@@ -382,7 +382,6 @@ function Gallery() {
 
   useEffect(() => { loadImages(0, BATCH); }, [loadImages]);
 
-  const allImages = useMemo(() => [...heroImages.map((src, i) => ({ id: `h${i}`, src })), ...loadedImages], [loadedImages]);
   const lightboxImages = loadedImages.map(i => i.src);
 
   const openLightbox = (idx) => setLightboxIndex(idx);
