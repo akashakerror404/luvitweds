@@ -15,7 +15,7 @@ import AdminLayout from './adminpages/layout/AdminLayout';
 import Dashboard from './adminpages/pages/Dashboard';
 import Bookings from './adminpages/pages/Bookings';
 import ClinetRequestList from './adminpages/pages/ClinetRequest/ClinetRequestList';
-import ClientRequestView from './adminpages/pages/ClinetRequest/ClinetRequestView';
+// import ClientRequestView from './adminpages/pages/ClinetRequest/ClinetRequestView';
 import ClientRequestEdit from './adminpages/pages/ClinetRequest/ClinetRequestEdit';
 
 // Maintenance Mode Component
@@ -110,7 +110,7 @@ function App() {
           <Route index element={<Dashboard />} />
           <Route path="bookings" element={<Bookings />} />
           <Route path="clinetrequestlist" element={<ClinetRequestList />} />
-          <Route path="client-requests/view/:id" element={<ClientRequestView />} />
+          {/* <Route path="client-requests/view/:id" element={<ClientRequestView />} /> */}
           <Route path="client-requests/edit/:id" element={<ClientRequestEdit />} />
         </Route>
       </Routes>
