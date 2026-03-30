@@ -4,6 +4,9 @@ import arjun from "./arjun-meera";
 import jishnuVandana from "./jishnuVandana";
 import rahularchana from "./rahul-archana";
 import vishalAnukrishna from "./vishalAnukrishna";
+import sreelakshmirohith from "./sreelakshmirohith";
+
+
 
 
 
@@ -13,7 +16,9 @@ export const allWeddings = {
   "arjun-meera": arjun,
   "jishnu-vandana": jishnuVandana,
     "rahul-archana": rahularchana,
-    "vishalAnukrishna": vishalAnukrishna,
+    "vishal-Anukrishna": vishalAnukrishna,
+        "sreelakshmi-rohith": sreelakshmirohith,
+
 
 
 };

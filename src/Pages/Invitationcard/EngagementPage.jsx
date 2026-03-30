@@ -5,7 +5,7 @@ import Lottie from "lottie-react";
 import invitation from '../../assets/Invitation/invitation.jpg';
 import { motion, AnimatePresence } from "framer-motion";
 import { Helmet } from "react-helmet";
-import song from '../../assets/Invitation/song.mp3';
+import song from '../../assets/Invitation/en.mp3';
 import heartAnimation from "./animations/weddingfloral.json";
 import ringsAnimation from "./animations/Hearth";
 
