@@ -1,11 +1,11 @@
 import invitation from '../../../assets/Invitation/SREE.jpg'
 
 const sreelakshmi = {
-  slug: "sreelakshmi-rohith",
+  slug: "sreelakshmi-robith",
 
   couple: {
     bride: "Sreelakshmi",
-    groom: "Rohith",
+    groom: "Robith",
 
     images: {
       mobile: invitation,

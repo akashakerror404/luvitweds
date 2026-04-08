@@ -17,7 +17,7 @@ export const allWeddings = {
   "jishnu-vandana": jishnuVandana,
     "rahul-archana": rahularchana,
     "vishal-Anukrishna": vishalAnukrishna,
-        "sreelakshmi-rohith": sreelakshmirohith,
+        "sreelakshmi-robith": sreelakshmirohith,
 
 
 
