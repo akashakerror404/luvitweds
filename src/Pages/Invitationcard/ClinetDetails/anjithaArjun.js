@@ -15,7 +15,7 @@ const anjithaArjun = {
 
   wedding: {
     day: "", 
-    date: "26",
+    date: "2",
     month: "May",
     year: "2026",
     time: "", 
