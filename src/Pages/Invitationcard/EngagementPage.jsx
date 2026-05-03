@@ -108,7 +108,7 @@ const EngagementStyles = () => (
     .hero-veil { position: absolute; inset: 0; background: linear-gradient(to bottom, rgba(44,34,24,0.1) 0%, transparent 30%, transparent 55%, rgba(250,246,239,0.92) 100%); }
     .hero-content { position: relative; z-index: 2; width: 100%; text-align: center; padding: 0 24px clamp(60px, 12vw, 120px); }
     .hero-eyebrow { font-family: 'Jost', sans-serif; font-weight: 200; font-size: 10px; letter-spacing: 0.6em; text-transform: uppercase; color: rgba(250,246,239,0.8); margin-bottom: 16px; display: block; }
-    .hero-names { font-family: 'Great Vibes', cursive; font-size: clamp(52px, 12vw, 110px); color: #fff; line-height: 1.0; text-shadow: 0 4px 40px rgba(44,34,24,0.35); margin-bottom: 12px; }
+    .hero-names {text-transform: none; font-family: 'Great Vibes', cursive; font-size: clamp(52px, 12vw, 110px); color: #fff; line-height: 1.0; text-shadow: 0 4px 40px rgba(44,34,24,0.35); margin-bottom: 12px; }
     .hero-amp { font-family: 'Playfair Display', serif; font-size: clamp(24px, 4vw, 42px); font-style: italic; color: var(--gold); display: block; line-height: 1; }
     .hero-date-strip { display: inline-flex; align-items: center; gap: 16px; margin-top: 20px; }
     .hero-date-line { width: 40px; height: 1px; background: rgba(255,255,255,0.4); }
