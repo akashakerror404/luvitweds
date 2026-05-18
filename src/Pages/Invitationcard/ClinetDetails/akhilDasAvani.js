@@ -21,7 +21,7 @@ const akhilDasAvani = {
     time: "11:00 AM - 12:00 PM", 
     venue: "",
 
-    mapLocation: "",
+    mapLocation: "https://maps.app.goo.gl/NPNuLT3AjATPrMUT7",
   },
 
   reception: {
