@@ -7,6 +7,8 @@ import vishalAnukrishna from "./vishalAnukrishna";
 import sreelakshmirohith from "./sreelakshmirohith";
 import anjithaArjun from "./anjithaArjun";
 import Arjunanjitha from "./Arjunanjitha";
+import akhilDasAvani from "./akhilDasAvani";
+
 
 
 
@@ -23,6 +25,8 @@ export const allWeddings = {
   "sreelakshmi-robith": sreelakshmirohith,
   "anjitha-arjun": anjithaArjun,
   "arjun-anjitha": Arjunanjitha,
+  "akhil-das-avani": akhilDasAvani,
+
 
 
 
