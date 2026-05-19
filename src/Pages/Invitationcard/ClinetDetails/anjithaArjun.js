@@ -4,8 +4,8 @@ const anjithaArjun = {
   slug: "anjitha-arjun",
 
   couple: {
-   bride: "Dr. Anjitha",
-    groom: "Dr. Arjun",
+   bride: "Dr. Arjun Krishna ",
+    groom: "Dr. Anjitha Asok",
 
     images: {
       mobile: invitation,
