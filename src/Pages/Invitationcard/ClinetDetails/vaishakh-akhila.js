@@ -4,8 +4,8 @@ const rahulArchana = {
   slug: "rahul-archana",
 
   couple: {
-    bride: "Akhila",
-    groom: "Vaishakh",
+    bride: "Vaishakh",
+    groom: "Akhila",
 
     images: {
       mobile: invitation,
