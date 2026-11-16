@@ -13,6 +13,9 @@ import athulNeethu from "./athulNeethu";
 import vaishakhakhila from "./vaishakh-akhila";
 
 import anjithaathul from "./anjitha-athul";
+import dhrisyaAnoop from "./dhrisyaAnoop";
+
+import abhinavSreelakshmi from "./abhinavSreelakshmi";
 
 
 
@@ -29,7 +32,11 @@ export const allWeddings = {
   "akhil-das-avani": akhilDasAvani,
  "athul-neethu": athulNeethu,
  "vaishakh-akhila":vaishakhakhila,
- "anjitha-athul" : anjithaathul
+ "anjitha-athul" : anjithaathul,
+ "dhrisya-Anoop" : dhrisyaAnoop,
+"Abhinav-Sreelakshmi": abhinavSreelakshmi
+
+ 
 
 
 
